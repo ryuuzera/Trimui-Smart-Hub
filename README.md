@@ -2,6 +2,9 @@
 
 **Trimui Smart Hub** is a unofficial tool designed to enhance your experience with Trimui devices by providing automated game management and emulator configuration features. This application helps you effortlessly manage your game library, download thumbnails, and organize your emulators, all in one place.
 
+
+<p align="center"> <img src="https://github.com/user-attachments/assets/a64da849-b48a-488d-8671-984686dca669" width="550px" /> <br> <img src="https://github.com/user-attachments/assets/23e613ea-ce6d-4687-a65e-5e02baa94fa2" width="550px" /> </p>
+
 ## Features
 
 - **Automatic USB Recognition**  
@@ -18,6 +21,8 @@
 
 - **Configure Best Directory** *(Coming Soon)*  
   Set up optimal directory configurations to keep your games, saves, and settings organized and easily accessible.
+  
+<p align="center"> <img src="https://github.com/ryuuzera/TrimuiSmartHub/blob/master/readme-animation.gif?raw=true" width="650px" /> </p>
 
 ## Technology Stack
 
