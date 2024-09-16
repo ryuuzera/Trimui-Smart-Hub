@@ -1,0 +1,42 @@
+﻿<Page x:Class="TrimuiSmartHub.Application.Pages.SmartProHub"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TrimuiSmartHub.Application.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="SmartProHub">
+
+    <Grid>
+        <DockPanel>
+            <Border CornerRadius="10" Background="#22384f" Margin="15">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" BlurRadius="50" ShadowDepth="5" Opacity="0.2"/>
+                </Border.Effect>
+                <StackPanel Margin="0" DockPanel.Dock="Left" Width="200">
+                    <Button 
+                            Style="{StaticResource TransparentButton}" 
+                            HorizontalAlignment="Left"
+                            Margin="20,10,0,0"
+                            Width="150"
+                            Cursor="Hand"
+                            Click="BackHome_Click"
+                         >
+                        <StackPanel Orientation="Horizontal" Width="150" >
+                            <TextBlock HorizontalAlignment="Left" Margin="0,0,10,0" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="#AAB8C2" Text="&#xE845;" VerticalAlignment="Center"/>
+                            <TextBlock FontSize="16" Foreground="#AAB8C2" Text="Back"/>
+                        </StackPanel>
+                    </Button>
+                    <Rectangle Width="160" Margin="0,18,0,0" Fill="#AAB8C2" Height="1" />
+                    <Button Content="Get Game Images" Click="GetImages_Click" Style="{StaticResource NavButtonStyle}" Tag="&#xE8B9;" />
+                    <Button Content="ROMs" Style="{StaticResource NavButtonStyle}" Tag="&#xE945;" />
+                    <Button Content="Best Tab" Style="{StaticResource NavButtonStyle}" Tag="&#xE735;" />
+                    <Button Content="Other" Style="{StaticResource NavButtonStyle}" Tag="&#xE946;" />
+                </StackPanel>
+            </Border>
+
+            <Frame x:Name="NavigationFrame" NavigationUIVisibility="Hidden" />
+        </DockPanel>
+    </Grid>
+</Page>

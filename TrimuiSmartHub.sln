@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34916.146
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrimuiSmartHub.Application", "TrimuiSmartHub.Application\TrimuiSmartHub.Application.csproj", "{65707952-E83A-432D-8C5D-BCADF99488E9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65707952-E83A-432D-8C5D-BCADF99488E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65707952-E83A-432D-8C5D-BCADF99488E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65707952-E83A-432D-8C5D-BCADF99488E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65707952-E83A-432D-8C5D-BCADF99488E9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9C54043E-39D4-4441-92B4-DF5941A22039}
+	EndGlobalSection
+EndGlobal

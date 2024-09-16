@@ -1,0 +1,98 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="NovaPasta\**" />
+    <EmbeddedResource Remove="NovaPasta\**" />
+    <None Remove="NovaPasta\**" />
+    <Page Remove="NovaPasta\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Images\Emulators\ARCADE.png" />
+    <None Remove="Resources\Images\Emulators\ATARI2600.png" />
+    <None Remove="Resources\Images\Emulators\ATARI7800.png" />
+    <None Remove="Resources\Images\Emulators\CPS1.png" />
+    <None Remove="Resources\Images\Emulators\CPS2.png" />
+    <None Remove="Resources\Images\Emulators\CPS3.png" />
+    <None Remove="Resources\Images\Emulators\DC.png" />
+    <None Remove="Resources\Images\Emulators\FBNEO.png" />
+    <None Remove="Resources\Images\Emulators\FC.png" />
+    <None Remove="Resources\Images\Emulators\GB.png" />
+    <None Remove="Resources\Images\Emulators\GBA.png" />
+    <None Remove="Resources\Images\Emulators\GBC.png" />
+    <None Remove="Resources\Images\Emulators\GG.png" />
+    <None Remove="Resources\Images\Emulators\MAME.png" />
+    <None Remove="Resources\Images\Emulators\MAME2003PLUS.png" />
+    <None Remove="Resources\Images\Emulators\MD.png" />
+    <None Remove="Resources\Images\Emulators\MS.png" />
+    <None Remove="Resources\Images\Emulators\N64.png" />
+    <None Remove="Resources\Images\Emulators\NDS.png" />
+    <None Remove="Resources\Images\Emulators\NEOGEO.png" />
+    <None Remove="Resources\Images\Emulators\NGP.png" />
+    <None Remove="Resources\Images\Emulators\PCE.png" />
+    <None Remove="Resources\Images\Emulators\PGM.png" />
+    <None Remove="Resources\Images\Emulators\PPSSPP.png" />
+    <None Remove="Resources\Images\Emulators\PS.png" />
+    <None Remove="Resources\Images\Emulators\SFC.png" />
+    <None Remove="Resources\Images\Emulators\SS.png" />
+    <None Remove="Resources\Images\Emulators\WSC.png" />
+    <None Remove="Resources\Images\Portable3D.png" />
+    <None Remove="Resources\Images\trimui_off.png" />
+    <None Remove="Resources\Images\trimui_on.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsQuery" Version="1.3.4" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="3.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\Emulators\ARCADE.png" />
+    <Resource Include="Resources\Images\Emulators\ATARI2600.png" />
+    <Resource Include="Resources\Images\Emulators\ATARI7800.png" />
+    <Resource Include="Resources\Images\Emulators\CPS1.png" />
+    <Resource Include="Resources\Images\Emulators\CPS2.png" />
+    <Resource Include="Resources\Images\Emulators\CPS3.png" />
+    <Resource Include="Resources\Images\Emulators\DC.png" />
+    <Resource Include="Resources\Images\Emulators\FBNEO.png" />
+    <Resource Include="Resources\Images\Emulators\FC.png" />
+    <Resource Include="Resources\Images\Emulators\GB.png" />
+    <Resource Include="Resources\Images\Emulators\GBA.png" />
+    <Resource Include="Resources\Images\Emulators\GBC.png" />
+    <Resource Include="Resources\Images\Emulators\GG.png" />
+    <Resource Include="Resources\Images\Emulators\MAME.png" />
+    <Resource Include="Resources\Images\Emulators\MAME2003PLUS.png" />
+    <Resource Include="Resources\Images\Emulators\MD.png" />
+    <Resource Include="Resources\Images\Emulators\MS.png" />
+    <Resource Include="Resources\Images\Emulators\N64.png" />
+    <Resource Include="Resources\Images\Emulators\NDS.png" />
+    <Resource Include="Resources\Images\Emulators\NEOGEO.png" />
+    <Resource Include="Resources\Images\Emulators\NGP.png" />
+    <Resource Include="Resources\Images\Emulators\PCE.png" />
+    <Resource Include="Resources\Images\Emulators\PGM.png" />
+    <Resource Include="Resources\Images\Emulators\PPSSPP.png" />
+    <Resource Include="Resources\Images\Emulators\PS.png" />
+    <Resource Include="Resources\Images\Emulators\SFC.png" />
+    <Resource Include="Resources\Images\Emulators\SS.png" />
+    <Resource Include="Resources\Images\Emulators\WSC.png" />
+    <Resource Include="Resources\Images\Portable3D.png" />
+    <Resource Include="Resources\Images\trimui_off.png" />
+    <Resource Include="Resources\Images\trimui_on.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\LibRetro\" />
+  </ItemGroup>
+
+</Project>
