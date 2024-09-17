@@ -6,6 +6,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using TrimuiSmartHub.Application.Repository;
 using CsQuery.ExtensionMethods.Internal;
+using TrimuiSmartHub.Application.Services.LibRetro;
 
 namespace TrimuiSmartHub.Application.Frames
 {
@@ -25,14 +26,16 @@ namespace TrimuiSmartHub.Application.Frames
 
             foreach (var emulator in emulatorList)
             {
-                var emulatorCard = CreateGameComponent(emulator);
+                var emulatorRoms = TrimuiService.New().GetRomsByEmulator(emulator);
+
+                var emulatorCard = CreateGameComponent(emulator, emulatorRoms);
 
                 if (emulatorCard == null) continue;
 
                 Container.Children.Add(emulatorCard);
             }
         }
-        private Button? CreateGameComponent(string emulator, string gamesTotal = "0")
+        private Button? CreateGameComponent(string emulator, List<string> romsList)
         {
             string emulatorDescription;
 
@@ -42,7 +45,7 @@ namespace TrimuiSmartHub.Application.Frames
 
             Border border = new Border
             {
-                Background = new SolidColorBrush(Color.FromArgb(110, 51, 51, 51)), // Cor com transparência
+                Background = new SolidColorBrush(Color.FromArgb(110, 51, 51, 51)), 
                 CornerRadius = new CornerRadius(10),
                 Width = 120,
                 Height = 120,
@@ -78,7 +81,7 @@ namespace TrimuiSmartHub.Application.Frames
 
             TextBlock descriptionBlock = new TextBlock
             {
-                Text = $"{gamesTotal} Games",
+                Text = $"{romsList.Count} Games",
                 FontSize = 12,
                 Foreground = Brushes.Gray,
                 HorizontalAlignment = HorizontalAlignment.Center
@@ -100,7 +103,23 @@ namespace TrimuiSmartHub.Application.Frames
 
             button.Click += (sender, e) =>
             {
-                MessageBox.Show($"{emulator} clicked!"); 
+                var imgFolder = TrimuiService.New().GetImageFolder(emulator);
+
+                var count = 0;
+                foreach (var rom in romsList)
+                {
+                    if (File.Exists(Path.Combine(imgFolder, $"{rom}.png"))) continue;
+
+                    var boxImage = LibretroService.New().SearchThumbnail(emulatorDescription, rom);
+
+                    if (boxImage == null) continue;
+                   
+                    File.WriteAllBytes($@"{imgFolder}\{rom}.png", boxImage);
+                    
+                    count++;
+                }
+
+                if (count > 0) MessageBox.Show($"{count} new Game Images find!");
             };
 
             return button;

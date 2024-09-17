@@ -9,13 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NovaPasta\**" />
-    <EmbeddedResource Remove="NovaPasta\**" />
-    <None Remove="NovaPasta\**" />
-    <Page Remove="NovaPasta\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Resources\Images\Emulators\ARCADE.png" />
     <None Remove="Resources\Images\Emulators\ATARI2600.png" />
     <None Remove="Resources\Images\Emulators\ATARI7800.png" />
@@ -89,10 +82,6 @@
     <Resource Include="Resources\Images\Portable3D.png" />
     <Resource Include="Resources\Images\trimui_off.png" />
     <Resource Include="Resources\Images\trimui_on.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\LibRetro\" />
   </ItemGroup>
 
 </Project>

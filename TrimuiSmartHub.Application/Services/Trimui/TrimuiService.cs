@@ -13,15 +13,22 @@ namespace TrimuiSmartHub.Application.Services.Trimui
     public class TrimuiService : INotifyPropertyChanged, IDisposable
     {
         private string _status = "Disconnected";
+
         private Brush _statusColor = Brushes.Red;
+
         private string _diskLetter = string.Empty;
-        private Timer _timer;
-        private WMIService _WMI;
-        private static TrimuiService Instance;
+
+        private readonly Timer _timer;
+
+        private readonly WMIService _WMI;
+
+        private static TrimuiService? Instance;
+
         private static readonly object Lock = new object();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private string EmulatorPath { get => $"{DiskLetter}Emus"; }
         public string Status
         {
             get => _status;
@@ -175,68 +182,93 @@ namespace TrimuiSmartHub.Application.Services.Trimui
             }
         }
 
-        public List<string> GetEmulators()
+        public static List<string>? GetFilesSafe(string directoryPath)
         {
-            var emusPath = $"{DiskLetter}Emus";
-
-            var result = new List<string>();
+            List<string> files = new List<string>();
 
             try
             {
-                if (!Directory.Exists(emusPath))
+                files.AddRange(Directory.GetFiles(directoryPath));
+
+                foreach (var subDirectory in Directory.GetDirectories(directoryPath))
                 {
-                    throw new Exception("Emulators folder not found.");
+                    try
+                    {
+                        files.AddRange(GetFilesSafe(subDirectory));
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
                 }
-
-                string[] folders = Directory.GetDirectories(emusPath, "*", SearchOption.TopDirectoryOnly);
-
-                result.AddRange(folders.Select(x => Path.GetFileName(x)));
-
-                // remover depois
-
-                //foreach (var item in folders)
-                //{
-                //    string configFilePath = Path.Combine(item, "config.json");
-
-                //    var projectBasePath = AppDomain.CurrentDomain.BaseDirectory;
-                //    var relativeDestinationPath = Path.Combine(projectBasePath, @"..\..\..\Resources\Images\Emulators");
-
-                //    var destinationPath = Path.GetFullPath(relativeDestinationPath);
-
-                //    if (File.Exists(configFilePath))
-                //    {
-                //        string jsonContent = File.ReadAllText(configFilePath);
-
-                //        JObject config = JObject.Parse(jsonContent);
-
-                //        string iconFileName = config["icon"]?.ToString();
-
-                //        if (!string.IsNullOrEmpty(iconFileName))
-                //        {
-                //            string sourceImagePath = Path.Combine(item, iconFileName);
-
-                //            if (File.Exists(sourceImagePath))
-                //            {
-                //                string destinationImagePath = Path.Combine(destinationPath, $"{Path.GetFileName(item)}{Path.GetExtension(iconFileName)}");
-
-                //                File.Copy(sourceImagePath, destinationImagePath, overwrite: true);
-                //                Console.WriteLine($"Imagem '{iconFileName}' copiada para '{destinationImagePath}'.");
-                //            }
-                //            else
-                //            {
-                //                Console.WriteLine($"Imagem '{iconFileName}' não encontrada em '{item}'.");
-                //            }
-                //        }
-                //    }
-                //}
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show(ex.Message);
+              // ignore
             }
+
+            return files?.Select(x => Path.GetFileName(x).Split(".").First()).ToList();
+        }
+        private string? EmulatorConfig(string emulator, string property)
+        {
+            string[] folders = Directory.GetDirectories(EmulatorPath, "*", SearchOption.TopDirectoryOnly);
+
+            var root = folders.Select(x => Path.GetFileName(x)).FirstOrDefault(x => x.Equals(emulator));
+
+            string configFilePath = Path.Combine(Path.Combine(EmulatorPath, root), "config.json");
+
+            if (!File.Exists(configFilePath)) return string.Empty;
+
+            string jsonContent = File.ReadAllText(configFilePath);
+
+            JObject config = JObject.Parse(jsonContent);
+
+            string configValue = config[property]?.ToString();
+
+            return configValue;
+        }
+
+        public List<string> GetRomsByEmulator(string emulator)
+        {
+            var result = new List<string>();
+
+            string romsPath = EmulatorConfig(emulator, "rompath");
+
+            if (string.IsNullOrEmpty(romsPath)) return result;
+
+            string emulatorRomPath = Path.GetFullPath(Path.Combine(Path.Combine(EmulatorPath, emulator), romsPath));
+
+            var roms = GetFilesSafe(emulatorRomPath);
+
+            if (roms != null && roms?.Count > 0) result.AddRange(roms);
+
+            return result;
+        }
+
+        public string GetImageFolder(string emulator)
+        {
+            string imagePath = EmulatorConfig(emulator, "imgpath");
+
+            if (string.IsNullOrEmpty(imagePath)) return string.Empty;
+
+            string emulatorImagesPath = Path.GetFullPath(Path.Combine(Path.Combine(EmulatorPath, emulator), imagePath));
+
+            return emulatorImagesPath;
+        }
+
+        public List<string> GetEmulators()
+        {
+            var result = new List<string>();
+
+            if(!Directory.Exists(EmulatorPath)) return result;
+   
+            string[] folders = Directory.GetDirectories(EmulatorPath, "*", SearchOption.TopDirectoryOnly);
+
+            result.AddRange(folders.Select(x => Path.GetFileName(x))); 
 
             return result.OrderBy(item => item).ToList();
         }
+
         protected void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
