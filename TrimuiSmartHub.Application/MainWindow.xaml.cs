@@ -4,18 +4,19 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using TrimuiSmartHub.Application.Services.Trimui;
 using TrimuiSmartHub.Application.Pages;
+using MahApps.Metro.Controls;
+using ControlzEx.Theming;
 
 namespace TrimuiSmartHub.Application
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
         private TrimuiService trimuiService;
         public MainWindow()
         {
             InitializeComponent();
+
+            ThemeManager.Current.ChangeTheme(this, ThemeManager.Current.GetTheme("Light.Blue"));
 
             trimuiService = TrimuiService.New();
 
@@ -46,6 +47,8 @@ namespace TrimuiSmartHub.Application
             if (status.Contains("Dis"))
             {
                 MainFrame.Navigate(new Home(this));
+
+                return;
             }
         }
     }

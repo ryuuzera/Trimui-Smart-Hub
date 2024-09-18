@@ -207,8 +207,14 @@ namespace TrimuiSmartHub.Application.Services.Trimui
               // ignore
             }
 
-            return files?.Select(x => Path.GetFileName(x).Split(".").First()).ToList();
+            return files?.Select(x => Path.GetFileName(x)).ToList();
         }
+
+        private static bool IsFile(string path)
+        {
+            return (File.GetAttributes(path) & FileAttributes.Directory) != FileAttributes.Directory;
+        }
+
         private string? EmulatorConfig(string emulator, string property)
         {
             string[] folders = Directory.GetDirectories(EmulatorPath, "*", SearchOption.TopDirectoryOnly);
@@ -273,5 +279,6 @@ namespace TrimuiSmartHub.Application.Services.Trimui
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
 }

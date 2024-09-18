@@ -9,8 +9,10 @@ namespace TrimuiSmartHub.Application.Helpers
 {
     internal static class LevenshteinAlgorithm
     {
-        public static string FindMostSimilar(string target, List<string> list, int maxDistance = 3)
+        public static string FindMostSimilar(string target, List<string> list, int maxDistance = 7)
         {
+            if (target.IsNullOrEmpty()) return null;
+
             List<(string str, int distance)> probableMatches = new List<(string str, int distance)>();
             string processedTarget = PreprocessString(target);
 

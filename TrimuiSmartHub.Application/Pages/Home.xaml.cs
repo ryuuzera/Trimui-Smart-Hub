@@ -56,6 +56,8 @@ namespace TrimuiSmartHub.Application.Pages
 
                 return;
             };
+
+            mainWindow.MainFrame.Navigate(new ConnectionGuide(mainWindow));
         }
     }
 }

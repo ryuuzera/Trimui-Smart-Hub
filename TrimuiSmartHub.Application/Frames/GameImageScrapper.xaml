@@ -6,13 +6,28 @@
       xmlns:local="clr-namespace:TrimuiSmartHub.Application.Frames"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
+     xmlns:li="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
       Title="GameImageScrapper">
-
     <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Style="{StaticResource CustomScrollViewer}" >
-            <WrapPanel Orientation="Horizontal" Margin="10" x:Name="Container">
+        <StackPanel x:Name="LoadingIndicator" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,25,100">
+            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#AAB8C2" Text="Loading Emulators" Margin="25"/>
+            <li:LoadingIndicator  SpeedRatio="1" IsActive="True" Style="{DynamicResource LoadingIndicatorThreeDotsStyle}" Foreground="#2d607f" RenderTransformOrigin="0.5,0.5" >
+            <li:LoadingIndicator.RenderTransform>
+                <ScaleTransform ScaleX="2" ScaleY="2" />
+            </li:LoadingIndicator.RenderTransform>
+        </li:LoadingIndicator>
+        </StackPanel>
+        <StackPanel x:Name="Panel" Visibility="Collapsed" Orientation="Vertical" Margin="0,25">
+            <TextBlock Text="Select a console to download missing game box arts." Foreground="#AAB8C2" FontSize="16" FontWeight="SemiBold"/>
+            <Separator Width="Auto" Margin="5, 20, 20,20" Background="#AAB8C2"/>
 
-            </WrapPanel>
-        </ScrollViewer>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Style="{StaticResource CustomScrollViewer}" >
+                <WrapPanel Orientation="Horizontal" Margin="10" x:Name="Container">
+                  
+
+                </WrapPanel>
+            </ScrollViewer>
+            
+        </StackPanel>
     </Grid>
 </Page>

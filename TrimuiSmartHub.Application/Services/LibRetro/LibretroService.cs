@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TrimuiSmartHub.Application.Repository;
 using TrimuiSmartHub.Application.Helpers;
+using TrimuiSmartHub.Application.Model;
 
 namespace TrimuiSmartHub.Application.Services.LibRetro
 {
@@ -20,6 +21,8 @@ namespace TrimuiSmartHub.Application.Services.LibRetro
         private readonly HttpClient httpClient;
 
         private readonly Uri baseUri = new("https://thumbnails.libretro.com");
+
+        private readonly GameRepository gameRepository;
 
         public static LibretroService New()
         {
@@ -31,29 +34,41 @@ namespace TrimuiSmartHub.Application.Services.LibRetro
             httpClient = new HttpClient();
 
             httpClient.Timeout = TimeSpan.FromSeconds(15);
+
+            gameRepository = GameRepository.New();
         }
 
-        public byte[]? SearchThumbnail(string console, string title)
+        private GameData? FindGameFullName(string title)
+        {
+            return gameRepository.FindGameByRomName(title);
+        }
+
+        public async Task<byte[]?> SearchThumbnail(string console, string title)
         {
             try
             {
                 var CurrentUri = baseUri;
-
                 CQ lastDom = httpClient.GetStringAsync(CurrentUri).Result;
+                if (lastDom == null) return null;
 
-                var consoleList = lastDom["a"].Select(x => x.InnerText).ToList();
+                var consoleList = lastDom["a"].Select(x => x.InnerText).Where(x => !x.Equals("../")).ToList();
+                var matchedConsole = LevenshteinAlgorithm.FindMostSimilar(console, consoleList)?.Replace("/", string.Empty);
+                if (matchedConsole.IsNullOrEmpty()) return null;
 
-                var findItem = LevenshteinAlgorithm.FindMostSimilar(console, consoleList).Replace("/", string.Empty);
-
-                CurrentUri = CurrentUri.Append(findItem).Append("Named_Boxarts");
-
+                CurrentUri = CurrentUri.Append(matchedConsole).Append("Named_Boxarts");
                 lastDom = httpClient.GetStringAsync(CurrentUri).Result;
+                if (lastDom == null) return null;
 
-                var gameList = lastDom["a"].Select(x => x.InnerText).ToList();
+                var gameList = lastDom["a"].Select(x => x.InnerText).Where(x => !x.Equals("../")).ToList();
+                var findGame = LevenshteinAlgorithm.FindMostSimilar(title.Split('.').First(), gameList) ?? LevenshteinAlgorithm.FindMostSimilar(FindGameFullName(title)?.Name?.Split('/').FirstOrDefault().Trim() ?? string.Empty, gameList);
+                if (findGame.IsNullOrEmpty()) return null;
 
-                var findGame = LevenshteinAlgorithm.FindMostSimilar(title, gameList);
+                var hrefImage = lastDom["a"].Where(x => x.InnerText.Contains(findGame, StringComparison.OrdinalIgnoreCase))
+                                            .FirstOrDefault()?.GetAttribute("href");
 
-                CurrentUri = CurrentUri.Append(Uri.EscapeDataString(findGame));
+                if (hrefImage.IsNullOrEmpty()) return null;
+
+                CurrentUri = CurrentUri.Append(hrefImage);
 
                 var image = httpClient.GetByteArrayAsync(CurrentUri).Result;
 
@@ -63,7 +78,7 @@ namespace TrimuiSmartHub.Application.Services.LibRetro
             {
                 return null;
             }
-            
+          
         }
 
         public void Dispose()
