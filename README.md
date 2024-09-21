@@ -67,3 +67,5 @@ Contributions are welcome! If you have suggestions for improvements, feel free t
 ## License
 
 This project is not affiliated with or endorsed by Trimui. All trademarks and copyrights are the property of their respective owners.
+
+**This project does not store any games or copyrighted content; it simply searches for them on the Retrostic website. If you believe any copyrighted material is present on the Retrostic website, you can report it directly to them.**
