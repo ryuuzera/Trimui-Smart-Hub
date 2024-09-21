@@ -1,0 +1,34 @@
+﻿<Page x:Class="TrimuiSmartHub.Application.Frames.GameDownloader"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TrimuiSmartHub.Application.Frames"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      xmlns:li="clr-namespace:LoadingIndicators.WPF;assembly=LoadingIndicators.WPF"
+      Title="GameDownloader">
+
+    <Grid>
+        <StackPanel x:Name="LoadingIndicator" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,25,100">
+            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#AAB8C2" Text="Loading Emulators" Margin="25"/>
+            <li:LoadingIndicator  SpeedRatio="1" IsActive="True" Style="{DynamicResource LoadingIndicatorThreeDotsStyle}" Foreground="#2d607f" RenderTransformOrigin="0.5,0.5" >
+                <li:LoadingIndicator.RenderTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2" />
+                </li:LoadingIndicator.RenderTransform>
+            </li:LoadingIndicator>
+        </StackPanel>
+        <StackPanel x:Name="RomsPanel" Visibility="Collapsed" Orientation="Vertical" Margin="0,25">
+            <TextBlock Text="Select a Emulator" Foreground="#AAB8C2" FontSize="16" FontWeight="SemiBold"/>
+            <Separator Width="Auto" Margin="5, 20, 20,20" Background="#AAB8C2"/>
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Style="{StaticResource CustomScrollViewer}" >
+                <WrapPanel Orientation="Horizontal" Margin="10" x:Name="RomsContainer">
+
+
+                </WrapPanel>
+            </ScrollViewer>
+
+        </StackPanel>
+    </Grid>
+</Page>

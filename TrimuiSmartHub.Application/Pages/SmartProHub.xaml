@@ -29,8 +29,8 @@
                         </StackPanel>
                     </Button>
                     <Rectangle Width="160" Margin="0,18,0,0" Fill="#AAB8C2" Height="1" />
-                    <Button Content="Get Game Arts" Click="GetImages_Click" Style="{StaticResource NavButtonStyle}" Tag="&#xE8B9;" />
-                    <Button Content="ROMs" Style="{StaticResource NavButtonStyle}" Tag="&#xE945;" />
+                    <Button Content="Update BoxArts" Click="GetImages_Click" Style="{StaticResource NavButtonStyle}" Tag="&#xE8B9;" />
+                    <Button Content="ROMs" Click="Roms_Click" Style="{StaticResource NavButtonStyle}" Tag="&#xE945;" />
                     <Button Content="Best Tab" Style="{StaticResource NavButtonStyle}" Tag="&#xE735;" />
                     <Button Content="Other" Style="{StaticResource NavButtonStyle}" Tag="&#xE946;" />
                 </StackPanel>

@@ -132,20 +132,20 @@ namespace TrimuiSmartHub.Application.Frames
 
             button.Click += async (sender, e) =>
             {
-                var metroWindow = (MetroWindow)System.Windows.Application.Current.MainWindow;
+                await Loading(true, $"Downloading games boxart...");
 
-                var imgFolder = TrimuiService.New().GetImageFolder(emulator);
                 var count = 0;
-                var totalRoms = romsList.Count;
-
-                int processedRoms = 0;
-
-                var libRetro = LibretroService.New();
-
-                await Loading(true, $"Downloading games box art...");
 
                 await Task.Run(async () =>
                 {
+                    var imgFolder = await Task.Run(() => TrimuiService.New().GetImageFolder(emulator));
+
+                    var totalRoms = romsList.Count;
+
+                    int processedRoms = 0;
+
+                    var libRetro = LibretroService.New();
+
                     foreach (var romFile in romsList)
                     {
                         var rom = romFile.Split('.').First();
@@ -159,10 +159,7 @@ namespace TrimuiSmartHub.Application.Frames
 
                         var boxImage = await libRetro.SearchThumbnail(emulatorDescription, romFile);
 
-                        if (boxImage == null)
-                        {
-                            continue;
-                        }
+                        if (boxImage == null) continue;
 
                         try
                         {
@@ -171,21 +168,19 @@ namespace TrimuiSmartHub.Application.Frames
                         }
                         catch (Exception ex)
                         {
-                            //ignore
+                            continue;
                         }
                     }
-                   
                 });
-
 
                 await Loading(false);
 
-                if (count > 0) await ShowMessageAsync("Download Completed!", $"{count} Files was updated!");
+                await ShowMessageAsync("Download Completed!", (count > 0) ? $"{count} Files was updated!" : "The boxarts already updated!");
             };
 
             return button;
         }
-        private async Task<MessageDialogResult> ShowMessageAsync(string title, string content, MetroDialogSettings dialogSettings = null)
+        private static async Task<MessageDialogResult> ShowMessageAsync(string title, string content, MetroDialogSettings dialogSettings = null)
         {
             if (dialogSettings == null)
             {

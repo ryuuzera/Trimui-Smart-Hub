@@ -215,6 +215,11 @@ namespace TrimuiSmartHub.Application.Helpers
             return stringToClean == null ? null : Regex.Replace(stringToClean, @"[^\d]", string.Empty);
         }
 
+        public static string ClearSpecial(this string stringToClean)
+        {
+            return stringToClean == null ? null : Regex.Replace(stringToClean, @"[^a-zA-Z0-9]", string.Empty);
+        }
+
         public static bool IsNullOrEmpty(this string stringToVerify)
         {
             return string.IsNullOrEmpty(stringToVerify);
