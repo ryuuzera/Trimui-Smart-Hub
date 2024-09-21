@@ -49,8 +49,8 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="10">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Margin="5,0,10,0" Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="18" Margin="5,0,10,0" Text="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" />
                                 <ContentPresenter VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>

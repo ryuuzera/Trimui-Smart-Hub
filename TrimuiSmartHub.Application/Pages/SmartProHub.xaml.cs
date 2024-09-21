@@ -25,5 +25,10 @@ namespace TrimuiSmartHub.Application.Pages
         {
             NavigationFrame.Navigate(new GameImageScrapper());
         }
+
+        private void Roms_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationFrame.Navigate(new GameDownloader(this)); 
+        }
     }
 }
