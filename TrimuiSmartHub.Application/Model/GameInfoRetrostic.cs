@@ -8,6 +8,7 @@ namespace TrimuiSmartHub.Application.Model
 {
     public class GameInfoRetrostic
     {
+        public string? Emulator {  get; set; }
         public string Title { get; set; }
         public Uri? BoxArt { get; set; }
         public string? Region { get; set; }

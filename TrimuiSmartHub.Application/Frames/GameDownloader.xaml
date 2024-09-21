@@ -19,7 +19,7 @@
             </li:LoadingIndicator>
         </StackPanel>
         <StackPanel x:Name="RomsPanel" Visibility="Collapsed" Orientation="Vertical" Margin="0,25">
-            <TextBlock Text="Select a console to download missing game box arts." Foreground="#AAB8C2" FontSize="16" FontWeight="SemiBold"/>
+            <TextBlock Text="Select a Emulator" Foreground="#AAB8C2" FontSize="16" FontWeight="SemiBold"/>
             <Separator Width="Auto" Margin="5, 20, 20,20" Background="#AAB8C2"/>
 
             <ScrollViewer VerticalScrollBarVisibility="Auto" Style="{StaticResource CustomScrollViewer}" >

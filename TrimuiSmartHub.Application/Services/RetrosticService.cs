@@ -1,4 +1,5 @@
-﻿using CsQuery;
+﻿using ControlzEx.Standard;
+using CsQuery;
 using CsQuery.ExtensionMethods;
 using System.Diagnostics;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Text.RegularExpressions;
 using TrimuiSmartHub.Application.Helpers;
 using TrimuiSmartHub.Application.Model;
 using TrimuiSmartHub.Application.Repository;
+using TrimuiSmartHub.Application.Services.Trimui;
 
 
 namespace TrimuiSmartHub.Application.Services
@@ -18,7 +20,6 @@ namespace TrimuiSmartHub.Application.Services
         private readonly HttpClient httpClient;
 
         private CookieContainer cookieContainer;
-
         private Uri baseUri {  get; set; }
 
         private readonly GameRepository gameRepository;
@@ -49,6 +50,70 @@ namespace TrimuiSmartHub.Application.Services
         {
             httpClient.Dispose();
         }
+        public async Task<List<GameInfoRetrostic>> SearchGamesByName(string gameName, string emulator)
+        {
+            var result = new List<GameInfoRetrostic>();
+
+            var firstLetter = gameName.ToLower()[0];
+            var emulatorUri = EmulatorDictionary.EmulatorMapRetrostic.FirstOrDefault(x => x.Key.Equals(emulator)).Value.ToUri();
+            var sortingUri = emulatorUri.AddQuery("sorting", firstLetter);
+
+            string currentUri = sortingUri.ToString();
+
+            while (!string.IsNullOrEmpty(currentUri))
+            {
+                CQ lastDom = httpClient.GetStringAsync(currentUri).Result;
+
+                var tableRows = lastDom["tbody tr[itemtype*='VideoGame']"];
+
+                var gameList = tableRows["td[class*='d-sm-table-cell'] a[href*='/roms/']"]
+                                .Where(x => x.HasAttribute("title") && x.GetAttribute("title").ClearSpecial().ToLower().Contains(gameName?.ClearSpecial().ToLower()));
+
+                var gameImgs = gameList.Select(x => x.ChildNodes[0].GetAttribute("data-src")).ToList();
+
+                var gameRegions = tableRows["td"]
+                .Where(x =>
+                {
+                    var parentHtml = CQ.Create(x.ParentNode.InnerHTML);
+
+                    var hasMatchingTitle = parentHtml["td[class*='d-sm-table-cell'] a[href*='/roms/']"]
+                        .Any(a => a.HasAttribute("title") && a.GetAttribute("title").ClearSpecial().ToLower().Contains(gameName?.ClearSpecial().ToLower()));
+
+                    return hasMatchingTitle && x.InnerHTML.Contains("/flags") && !x.InnerHTML.Contains("\n");
+                })
+                .Select(x => x.InnerText)
+                .ToList();
+
+                foreach (var item in gameList)
+                {
+                    var gameInfo = new GameInfoRetrostic
+                    {
+                        Emulator = emulator,
+                        Title = Regex.Replace(item.GetAttribute("title").ToString()
+                                     .Replace("Roms", string.Empty)
+                                     .Replace("ISO", string.Empty),
+                                     @"\(\s*[^)]+\s*\)|\[\s*[^\]]+\s*\]", string.Empty).Trim(),
+                        BoxArt = baseUri.Append(gameImgs[gameList.IndexOf(item)] ?? ""),
+                        DownloadPage = baseUri.Append(item.GetAttribute("href") ?? ""),
+                        Region = gameRegions[gameList.IndexOf(item)] ?? ""
+                    };
+
+                    result.Add(gameInfo);
+                }
+
+                var nextPageElement = lastDom["a[class*='page-link']"].FirstOrDefault(x => x.InnerText.Equals("&gt;"));
+
+                if (nextPageElement != null)
+                {
+                    currentUri = baseUri.Append(nextPageElement.GetAttribute("href")).ToString();
+                    continue;
+                }
+                
+                currentUri = null; 
+            }
+
+            return result;
+        }
 
         public async Task<List<GameInfoRetrostic>> ListGamesByEmulator(string emulator)
         {
@@ -58,78 +123,61 @@ namespace TrimuiSmartHub.Application.Services
 
             CQ lastDom = httpClient.GetStringAsync(emulatorUri).Result;
 
-            var gameList = lastDom["td[class*='d-sm-table-cell'] a[href*='/roms/']"].Where(x => x.HasAttribute("title"));
+            var tableRows = lastDom["tbody tr[itemtype*='VideoGame']"];
+
+            var gameList = tableRows["td[class*='d-sm-table-cell'] a[href*='/roms/']"].Where(x => x.HasAttribute("title"));
 
             var gameImgs = gameList.Select(x => x.ChildNodes[0].GetAttribute("data-src")).ToList();
+
+            var gameRegions = tableRows["td"].Where(x => x.InnerHTML.Contains("/flags") && !x.InnerHTML.Contains("\n")).Select(x => x.InnerText).ToList();
 
             foreach (var item in gameList)
             {
                 var gameInfo = new GameInfoRetrostic
                 {
-                    Title = item.GetAttribute("title"),
+                    Emulator = emulator,
+                    Title = Regex.Replace(item.GetAttribute("title").ToString()
+                                 .Replace("Roms", string.Empty)
+                                 .Replace("ISO", string.Empty),
+                                 @"\(\s*[^)]+\s*\)|\[\s*[^\]]+\s*\]", string.Empty).Trim(),
                     BoxArt = baseUri.Append(gameImgs[gameList.IndexOf(item)] ?? ""),
-                    DownloadPage = baseUri.Append(item.GetAttribute("href") ?? "")
+                    DownloadPage = baseUri.Append(item.GetAttribute("href") ?? ""),
+                    Region = gameRegions[gameList.IndexOf(item)] ?? ""
                 };
 
                 result.Add(gameInfo);
             }
 
-            //var findGame = gameLinks.Select(x => x.GetAttribute("title")).Where(x => x.IsNotNullOrEmpty()).Where(x => x.Contains(romName)).First();
-
-            //var findGameLink = gameLinks.FirstOrDefault(x => x.GetAttribute("title").IsNotNullOrEmpty() && x.GetAttribute("title").Contains(romName)).GetAttribute("href");
-
-            //var downloadGamePageLink = baseUri.Append(findGameLink.ToString());
-
             return result;
 
         }
-        public async Task<byte[]?> DownloadGame(GameInfoRetrostic gameInfo)
+        public async Task<(Stream contentStream, FileStream fileStream, long totalBytes)> DownloadGame(GameInfoRetrostic gameInfo)
         {
             CQ downloadGamePage = httpClient.GetStringAsync(gameInfo.DownloadPage).Result;
 
             var session = downloadGamePage["input[name*='session']"]?.FirstOrDefault()?.GetAttribute("value");
-
             var gameinfo = gameInfo.DownloadPage?.ToString().Split('/');
 
             var formContent = KeyValueHelper.AddValue("session", session)
-                                             .AddValue("rom_url", gameinfo[5])
-                                             .AddValue("console_url", gameinfo[4]);
+                                            .AddValue("rom_url", gameinfo[5])
+                                            .AddValue("console_url", gameinfo[4]);
 
             var content = new FormUrlEncodedContent(formContent);
-
             downloadGamePage = httpClient.PostAsync(gameInfo.DownloadPage?.Append("download"), content).Result.Content.ReadAsStringAsync().Result;
 
             var downloadLink = Regex.Match(downloadGamePage.RenderSelection(), @"window\.location\.href\s*=\s*""(https:\/\/[^\s""]+)""").Groups[1].Value;
-
             var response = await httpClient.GetAsync(downloadLink, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
 
             var totalBytes = response.Content.Headers.ContentLength ?? -1L;
-            var canReportProgress = totalBytes != -1;
 
-            using (var contentStream = await response.Content.ReadAsStreamAsync())
-            using (var fileStream = new FileStream($"{gameInfo.Title}." + downloadLink.Split('.').Last(), FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
-            {
-                var buffer = new byte[8192];
-                long totalBytesRead = 0;
-                int bytesRead;
-                while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                {
-                    await fileStream.WriteAsync(buffer, 0, bytesRead);
-                    totalBytesRead += bytesRead;
+            var contentStream = await response.Content.ReadAsStreamAsync();
 
-                    if (canReportProgress)
-                    {
-                        Debug.WriteLine($"Downloaded {totalBytesRead} of {totalBytes} bytes. {(totalBytesRead * 100 / totalBytes):0.00}% complete.");
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"Downloaded {totalBytesRead} bytes.");
-                    }
-                }
-            }
+            var romsFolder = TrimuiService.New().GetRomsFolder(gameInfo.Emulator!);
 
-            return [0];
+            var fileStream = new FileStream(Path.Combine(romsFolder, $"{gameInfo.Title}.{downloadLink.Split('.').Last()}"), FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+
+            return (contentStream, fileStream, totalBytes);
         }
 
 

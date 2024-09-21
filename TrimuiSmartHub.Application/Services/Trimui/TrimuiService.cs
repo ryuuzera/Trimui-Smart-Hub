@@ -262,6 +262,17 @@ namespace TrimuiSmartHub.Application.Services.Trimui
             return emulatorImagesPath;
         }
 
+        public string GetRomsFolder(string emulator)
+        {
+            string romPath = EmulatorConfig(emulator, "rompath");
+
+            if (string.IsNullOrEmpty(romPath)) return string.Empty;
+
+            string emulatorImagesPath = Path.GetFullPath(Path.Combine(Path.Combine(EmulatorPath, emulator), romPath));
+
+            return emulatorImagesPath;
+        }
+
         public List<string> GetEmulators()
         {
             var result = new List<string>();

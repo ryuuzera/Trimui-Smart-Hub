@@ -92,7 +92,7 @@
                 </StackPanel>
                 </Button>
             </Border>
-        <TextBlock Text="{Binding DiskLetter}" Foreground="Gray" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10"/>
+        <TextBlock FontSize="18" Text="THIS IS A ALPHA VERSION, PLEASE REPORT ISSUES" Foreground="Gray" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,10" FontWeight="Bold"/>
     </Grid>
 
 </Page>

@@ -140,17 +140,13 @@ namespace TrimuiSmartHub.Application.Frames
 
                 var count = 0;
 
-                await Task.Run(async () =>
+                Task.Run(async () =>
                 {
                     //var download = RetrosticService.New().DownloadGame(emulator, "Street Fighter");
 
-                    var gameList = await RetrosticService.New().ListGamesByEmulator(emulator);
-
-                    if (gameList == null) return;
-
                     Dispatcher.Invoke(() =>
                     {
-                        Parent.NavigationFrame.Navigate(new GameDownloaderSearch(gameList));
+                        Parent.NavigationFrame.Navigate(new GameDownloaderSearch(emulator));
                     });
 
                 });

@@ -10,6 +10,14 @@
       Title="GameDownloaderSearch">
 
     <Grid>
+        <StackPanel x:Name="LoadingComponent" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,25,100">
+            <TextBlock FontSize="18" FontWeight="SemiBold" Foreground="#AAB8C2" Text="Searching Games..." Margin="25"/>
+            <li:LoadingIndicator  SpeedRatio="1" IsActive="True" Style="{DynamicResource LoadingIndicatorThreeDotsStyle}" Foreground="#2d607f" RenderTransformOrigin="0.5,0.5" >
+                <li:LoadingIndicator.RenderTransform>
+                    <ScaleTransform ScaleX="2" ScaleY="2" />
+                </li:LoadingIndicator.RenderTransform>
+            </li:LoadingIndicator>
+        </StackPanel>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" />
@@ -24,9 +32,11 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="150"/>
                 </Grid.ColumnDefinitions>
-                <Border Margin="30,0"
-                        Background="#F0F0F0"
-                        BorderBrush="Gray"
+                <TextBlock x:Name="ConsoleName" Margin="35,0,15,0" Text="Console Name" FontSize="16" FontWeight="SemiBold"
+                           Foreground="#AAB8C2" />
+                <Border Margin="30,15,15,0"
+                        Background="#4DF0F0F0"
+                        BorderBrush="Transparent"
                         BorderThickness="1"
                         CornerRadius="5"
                         HorizontalAlignment="Stretch"
@@ -43,9 +53,9 @@
                         VerticalAlignment="Center"
                         Margin="10,0,0,0"
                         FontSize="16"
-                        Foreground="Gray"/>
+                        Foreground="#AAB8C2"/>
 
-                        <TextBox x:Name="searchTextBox"
+                        <!--<TextBox x:Name="searchTextBox"
                         Grid.Column="1"
                         Margin="10,0,10,0"
                         VerticalAlignment="Center"
@@ -54,10 +64,35 @@
                         FontSize="14"
                         Foreground="Black"
                         Text="Search ROMs..."
-                        />
+                        />-->
+                        <Grid  Grid.Column="1">
+                            <TextBox  Width="250" FontSize="14" Foreground="#AAB8C2" Background="Transparent"  BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" x:Name="SearchTermTextBox" Margin="5"/>
+                            <TextBlock IsHitTestVisible="False"
+                                       FontSize="14"
+                                       Text="Enter the game name to search..." 
+                                       VerticalAlignment="Center" 
+                                       HorizontalAlignment="Left" 
+                                       Margin="10,0,0,0" 
+                                       Foreground="#AAB8C2" >
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=SearchTermTextBox}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
                     </Grid>
                 </Border>
-                <Button Height="35" Margin="0, 0,30,0" Grid.Column="1" />
+                <Button Background="#22384f" Height="33" Margin="0, 15,20,0" Grid.Column="1" Cursor="Hand" Click="Search_Button_Click">
+                    <Button.Content>
+                        <TextBlock Text="Search"  Foreground="#AAB8C2"  FontSize="14" FontWeight="Medium"  />
+                    </Button.Content>
+                </Button>
             </Grid>
          
                 <StackPanel Grid.Row="1" Margin="10">
@@ -65,8 +100,9 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="3*"/>
                                 <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                        </Grid.ColumnDefinitions>
                         
                            
                             <TextBlock Text="Image" 
@@ -85,12 +121,19 @@
                                 VerticalAlignment="Center" 
                                 Grid.Column="1" 
                                 Margin="20,0"/>
+                        <TextBlock Text="Region" 
+                                Foreground="#AAB8C2" 
+                                FontWeight="Bold"
+                                FontSize="14"
+                                VerticalAlignment="Center" 
+                                Grid.Column="2" 
+                                Margin="20,0"/>
                     </Grid>
                     </Border>
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Height="600">
-                <WrapPanel Orientation="Vertical" x:Name="Container" Margin="0,10,0,0">
-
-                    </WrapPanel>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Height="580">
+                <WrapPanel Orientation="Vertical" x:Name="Container" Margin="0,10,0,0" Visibility="Collapsed">
+                    
+                </WrapPanel>
                 </ScrollViewer>
            </StackPanel>
         </Grid>

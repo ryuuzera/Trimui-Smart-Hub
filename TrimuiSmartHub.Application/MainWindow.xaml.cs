@@ -16,7 +16,7 @@ namespace TrimuiSmartHub.Application
         {
             InitializeComponent();
 
-            ThemeManager.Current.ChangeTheme(this, ThemeManager.Current.GetTheme("Light.Blue"));
+            ThemeManager.Current.ChangeTheme(this, ThemeManager.Current.GetTheme("Light.Steel"));
 
             trimuiService = TrimuiService.New();
 
