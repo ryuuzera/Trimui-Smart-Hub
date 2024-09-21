@@ -5,6 +5,7 @@ using System.Windows.Media;
 using TrimuiSmartHub.Application.Model;
 using System.Windows.Data;
 using System.Globalization;
+using TrimuiSmartHub.Application.Services;
 
 namespace TrimuiSmartHub.Application.Frames
 {
@@ -42,13 +43,13 @@ namespace TrimuiSmartHub.Application.Frames
         {
             foreach (var item in GameList)
             {
-                var button = CreateGameButton(item.BoxArt, item.Title);
+                var button = CreateGameButton(item);
 
                 Container.Children.Add(button);
             }
         }
 
-        public Button CreateGameButton(Uri imageUrl, string gameTitle)
+        public Button CreateGameButton(GameInfoRetrostic gameInfo)
         {
             Button button = new Button
             {
@@ -71,7 +72,7 @@ namespace TrimuiSmartHub.Application.Frames
 
             try
             {
-                var imgSrc = new BitmapImage(imageUrl);
+                var imgSrc = new BitmapImage(gameInfo.BoxArt);
                 Image image = new Image
                 {
                     Source = imgSrc,
@@ -91,7 +92,7 @@ namespace TrimuiSmartHub.Application.Frames
 
             TextBlock textBlock = new TextBlock
             {
-                Text = gameTitle.Replace("Roms", string.Empty),
+                Text = gameInfo.Title.Replace("Roms", string.Empty),
                 Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#AAB8C2")),
                 FontWeight = FontWeights.SemiBold,
                 FontSize = 18,
@@ -100,7 +101,6 @@ namespace TrimuiSmartHub.Application.Frames
             };
             Grid.SetColumn(textBlock, 1);
 
-         
             grid.Children.Add(textBlock);
 
             Binding binding = new Binding("ActualWidth")
@@ -113,6 +113,24 @@ namespace TrimuiSmartHub.Application.Frames
             border.Child = grid;
 
             button.Content = border;
+
+            button.Click += async (sender, e) =>
+            {
+                //await Loading(true, $"Downloading games boxart...");
+
+                var count = 0;
+
+                await Task.Run(async () =>
+                {
+                    var download = RetrosticService.New().DownloadGame(gameInfo);
+
+                });
+
+                //await Loading(false);
+
+                //await ShowMessageAsync("Download Completed!", (count > 0) ? $"{count} Files was updated!" : "The boxarts already updated!");
+            };
+
 
             return button;
         }

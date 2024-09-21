@@ -62,33 +62,32 @@
          
                 <StackPanel Grid.Row="1" Margin="10">
                     <Border Padding="5" Background="#B31c2e41" CornerRadius="5">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
                         
                            
-                        <TextBlock Text="Image" 
-                           Foreground="#AAB8C2" 
-                           VerticalAlignment="Center" 
-                           FontSize="14"
-                           FontWeight="Bold"
-                           HorizontalAlignment="Center"
-                           Grid.Column="0" 
-                           Margin="10,0"/>
+                            <TextBlock Text="Image" 
+                               Foreground="#AAB8C2" 
+                               VerticalAlignment="Center" 
+                               FontSize="14"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Grid.Column="0" 
+                               Margin="10,0"/>
 
-                        <TextBlock Text="Name" 
-                           Foreground="#AAB8C2" 
-                           FontWeight="Bold"
-                           FontSize="14"
-                           VerticalAlignment="Center" 
-                           Grid.Column="1" 
-                           Margin="20,0"/>
-                       
+                            <TextBlock Text="Name" 
+                                Foreground="#AAB8C2" 
+                                FontWeight="Bold"
+                                FontSize="14"
+                                VerticalAlignment="Center" 
+                                Grid.Column="1" 
+                                Margin="20,0"/>
                     </Grid>
                     </Border>
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Height="700">
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Height="600">
                 <WrapPanel Orientation="Vertical" x:Name="Container" Margin="0,10,0,0">
 
                     </WrapPanel>
