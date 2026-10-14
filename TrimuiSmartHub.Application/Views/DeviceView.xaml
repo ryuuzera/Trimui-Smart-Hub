@@ -1,0 +1,127 @@
+<UserControl x:Class="TrimuiSmartHub.Application.Views.DeviceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TrimuiSmartHub.Application.ViewModels"
+             xmlns:l="clr-namespace:TrimuiSmartHub.Application.Localization"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:DeviceViewModel}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <TextBlock Text="{l:Loc NavDevice}" Style="{StaticResource Hub.PageTitle}" />
+            <TextBlock Text="{l:Loc DeviceSubtitle}" Style="{StaticResource Hub.Subtitle}" Margin="0,0,0,20" />
+
+            <!-- Connected -->
+            <Grid Visibility="{Binding Monitor.IsConnected, Converter={StaticResource Visible}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="380" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Style="{StaticResource Hub.CardBorder}" Margin="0,0,16,0">
+                    <StackPanel>
+                        <Image Source="/Resources/Images/trimui_on.png" Height="230" RenderOptions.BitmapScalingMode="HighQuality" />
+                        <TextBlock Text="{Binding Monitor.Current.Name}" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource Hub.TextStrong}" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                        <TextBlock Text="{Binding Monitor.Current.FirmwareDisplay}" Style="{StaticResource Hub.Subtitle}" HorizontalAlignment="Center" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
+                            <Button Style="{StaticResource Hub.Button}" Tag="RenameBox" Content="{l:Loc Rename}" Command="{Binding RenameCommand}" />
+                            <Button Style="{StaticResource Hub.Button}" Tag="FolderOpenOutline" Content="{l:Loc OpenFolder}" Command="{Binding OpenFolderCommand}" />
+                            <Button Style="{StaticResource Hub.Button}" Tag="Eject" Content="{l:Loc Eject}" Command="{Binding EjectCommand}" Margin="0" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Column="1">
+                    <Border Style="{StaticResource Hub.CardBorder}" Margin="0,0,0,16">
+                        <UniformGrid Columns="4">
+                            <StackPanel>
+                                <TextBlock Text="{l:Loc DeviceDrive}" Style="{StaticResource Hub.Subtitle}" />
+                                <TextBlock Text="{Binding Monitor.Current.RootPath}" FontSize="18" Foreground="{StaticResource Hub.TextStrong}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="{l:Loc DeviceFree}" Style="{StaticResource Hub.Subtitle}" />
+                                <TextBlock Text="{Binding FreeSpace, Converter={StaticResource Bytes}}" FontSize="18" Foreground="{StaticResource Hub.TextStrong}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="{l:Loc DeviceEmulators}" Style="{StaticResource Hub.Subtitle}" />
+                                <TextBlock Text="{Binding PlatformCount}" FontSize="18" Foreground="{StaticResource Hub.TextStrong}" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="{l:Loc DeviceFormat}" Style="{StaticResource Hub.Subtitle}" />
+                                <TextBlock Text="{Binding Format}" FontSize="18" Foreground="{StaticResource Hub.TextStrong}" />
+                            </StackPanel>
+                        </UniformGrid>
+                    </Border>
+
+                    <Border Style="{StaticResource Hub.CardBorder}" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="{l:Loc DeviceSyncTitle}" Style="{StaticResource Hub.SectionTitle}" />
+                            <TextBlock Text="{l:Loc DeviceSyncText}" Style="{StaticResource Hub.Body}" Margin="0,0,0,12" />
+                            <StackPanel Orientation="Horizontal">
+                                <Button Style="{StaticResource Hub.PrimaryButton}" Tag="Upload" Content="{l:Loc SyncToDevice}" Command="{Binding SyncToDeviceCommand}" />
+                                <Button Style="{StaticResource Hub.Button}" Tag="Download" Content="{l:Loc ImportFromDevice}" Command="{Binding ImportFromDeviceCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Hub.CardBorder}">
+                        <StackPanel>
+                            <TextBlock Text="{l:Loc NavSaves}" Style="{StaticResource Hub.SectionTitle}" />
+                            <TextBlock Style="{StaticResource Hub.Body}" Margin="0,0,0,12">
+                                <Run Text="{l:Loc DeviceSavesText}" /> <Run Text="{Binding SaveDirCount, Mode=OneWay}" FontWeight="SemiBold" />
+                            </TextBlock>
+                            <Button Style="{StaticResource Hub.Button}" Tag="ContentSaveOutline" Content="{l:Loc BackupNow}" Command="{Binding BackupNowCommand}" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Several devices / cards connected -->
+                    <Border Style="{StaticResource Hub.CardBorder}" Margin="0,16,0,0"
+                            Visibility="{Binding Monitor.Devices, Converter={StaticResource Visible}, ConverterParameter=multi}">
+                        <StackPanel>
+                            <TextBlock Text="{l:Loc DeviceOthers}" Style="{StaticResource Hub.SectionTitle}" />
+                            <ItemsControl ItemsSource="{Binding Monitor.Devices}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource Hub.LinkButton}" Margin="0,2"
+                                                Command="{Binding DataContext.SelectDeviceCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}">
+                                            <TextBlock>
+                                                <Run Text="{Binding Name, Mode=OneWay}" /> <Run Text="{Binding RootPath, Mode=OneWay}" Foreground="{StaticResource Hub.Muted}" />
+                                            </TextBlock>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <!-- Not connected: the app still works with the library -->
+            <Grid Visibility="{Binding Monitor.IsConnected, Converter={StaticResource Visible}, ConverterParameter=invert}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="380" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Style="{StaticResource Hub.CardBorder}" Margin="0,0,16,0">
+                    <StackPanel>
+                        <Image Source="/Resources/Images/trimui_off.png" Height="230" Opacity="0.8" RenderOptions.BitmapScalingMode="HighQuality" />
+                        <TextBlock Text="{l:Loc NoDevice}" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource Hub.TextStrong}" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                        <Button Style="{StaticResource Hub.Button}" Tag="Refresh" Content="{l:Loc SearchAgain}" Command="{Binding RescanCommand}" HorizontalAlignment="Center" Margin="0,12,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Column="1" Style="{StaticResource Hub.CardBorder}">
+                    <StackPanel>
+                        <TextBlock Text="{l:Loc ConnectTitle}" Style="{StaticResource Hub.SectionTitle}" />
+                        <TextBlock Text="{l:Loc ConnectUsb}" Style="{StaticResource Hub.Body}" Margin="0,0,0,8" />
+                        <Image Source="/Resources/Images/Ui/trimui-usb-example.png" MaxWidth="420" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,0,12" />
+                        <TextBlock Text="{l:Loc ConnectCardReader}" Style="{StaticResource Hub.Body}" Margin="0,0,0,8" />
+                        <TextBlock Text="{l:Loc ConnectOffline}" Style="{StaticResource Hub.Body}" Foreground="{StaticResource Hub.TextStrong}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

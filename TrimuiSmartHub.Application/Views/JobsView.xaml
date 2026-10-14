@@ -1,0 +1,70 @@
+<UserControl x:Class="TrimuiSmartHub.Application.Views.JobsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TrimuiSmartHub.Application.ViewModels"
+             xmlns:jobs="clr-namespace:TrimuiSmartHub.Core.Jobs;assembly=TrimuiSmartHub.Core"
+             xmlns:l="clr-namespace:TrimuiSmartHub.Application.Localization"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:JobsViewModel}">
+
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+            <Button DockPanel.Dock="Right" Style="{StaticResource Hub.Button}" Tag="NotificationClearAll" Content="{l:Loc JobsClear}" Command="{Binding ClearFinishedCommand}" VerticalAlignment="Top" Margin="0" />
+            <StackPanel>
+                <TextBlock Text="{l:Loc NavJobs}" Style="{StaticResource Hub.PageTitle}" />
+                <TextBlock Text="{l:Loc JobsSubtitle}" Style="{StaticResource Hub.Subtitle}" />
+            </StackPanel>
+        </DockPanel>
+
+        <Grid>
+            <TextBlock Text="{l:Loc JobsNone}" Style="{StaticResource Hub.Body}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Visibility="{Binding Jobs.Count, Converter={StaticResource Visible}, ConverterParameter=invert}" />
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Jobs}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type jobs:Job}">
+                            <Border Style="{StaticResource Hub.CardBorder}" Margin="0,0,0,8" Padding="14,10">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Right" Style="{StaticResource Hub.Button}" Content="{l:Loc Cancel}" Margin="12,0,0,0" VerticalAlignment="Center"
+                                            Command="{Binding DataContext.CancelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
+                                            Visibility="{Binding IsActive, Converter={StaticResource Visible}}" />
+                                    <StackPanel>
+                                        <DockPanel>
+                                            <TextBlock DockPanel.Dock="Right" Text="{Binding Status, Converter={StaticResource EnumLoc}}" FontSize="12">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="{StaticResource Hub.Muted}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static jobs:JobStatus.Completed}">
+                                                                <Setter Property="Foreground" Value="{StaticResource Hub.Ok}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static jobs:JobStatus.Failed}">
+                                                                <Setter Property="Foreground" Value="{StaticResource Hub.Error}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static jobs:JobStatus.Running}">
+                                                                <Setter Property="Foreground" Value="{StaticResource Hub.Accent}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding Title}" Foreground="{StaticResource Hub.TextStrong}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                        </DockPanel>
+                                        <ProgressBar Height="5" Margin="0,6,0,4" Minimum="0" Maximum="100"
+                                                     Value="{Binding Progress, Converter={StaticResource Percent}, Mode=OneWay}"
+                                                     Visibility="{Binding IsActive, Converter={StaticResource Visible}}" />
+                                        <TextBlock Text="{Binding Message}" FontSize="12" Foreground="{StaticResource Hub.Muted}" TextTrimming="CharacterEllipsis"
+                                                   Visibility="{Binding IsActive, Converter={StaticResource Visible}}" />
+                                        <TextBlock Text="{Binding Error}" FontSize="12" Foreground="{StaticResource Hub.Error}" TextWrapping="Wrap"
+                                                   Visibility="{Binding Error, Converter={StaticResource Visible}}" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,103 @@
+<UserControl x:Class="TrimuiSmartHub.Application.Views.StorageView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:vm="clr-namespace:TrimuiSmartHub.Application.ViewModels"
+             xmlns:l="clr-namespace:TrimuiSmartHub.Application.Localization"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:StorageViewModel}">
+
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+            <Button DockPanel.Dock="Right" Style="{StaticResource Hub.Button}" Tag="Refresh" Content="{l:Loc Refresh}" Command="{Binding RefreshCommand}" VerticalAlignment="Top" Margin="0" />
+            <StackPanel>
+                <TextBlock Text="{l:Loc NavStorage}" Style="{StaticResource Hub.PageTitle}" />
+                <TextBlock Text="{l:Loc StorageSubtitle}" Style="{StaticResource Hub.Subtitle}" />
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Totals -->
+        <UniformGrid DockPanel.Dock="Top" Columns="2" Margin="0,0,0,16">
+            <Border Style="{StaticResource Hub.CardBorder}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="{l:Loc StorageLibrary}" Style="{StaticResource Hub.Subtitle}" />
+                    <TextBlock Text="{Binding Report.LibraryBytes, Converter={StaticResource Bytes}}" FontSize="24" Foreground="{StaticResource Hub.TextStrong}" />
+                    <TextBlock Style="{StaticResource Hub.Subtitle}">
+                        <Run Text="{l:Loc StorageFreeOnDisk}" /> <Run Text="{Binding Report.LibraryFree, Mode=OneWay, Converter={StaticResource Bytes}}" />
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Hub.CardBorder}" Margin="8,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="{l:Loc StorageDevice}" Style="{StaticResource Hub.Subtitle}" />
+                    <TextBlock FontSize="24" Foreground="{StaticResource Hub.TextStrong}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="{Binding Report.DeviceBytes, Converter={StaticResource Bytes}}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Monitor.IsConnected}" Value="False">
+                                        <Setter Property="Text" Value="—" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <StackPanel Visibility="{Binding Monitor.IsConnected, Converter={StaticResource Visible}}">
+                        <ProgressBar Height="6" Margin="0,6,0,4" Minimum="0" Maximum="100" Value="{Binding DeviceUsedFraction, Converter={StaticResource Percent}, Mode=OneWay}" />
+                        <TextBlock Style="{StaticResource Hub.Subtitle}">
+                            <Run Text="{l:Loc StorageFree}" /> <Run Text="{Binding Report.DeviceFree, Mode=OneWay, Converter={StaticResource Bytes}}" /> /
+                            <Run Text="{Binding Report.DeviceTotal, Mode=OneWay, Converter={StaticResource Bytes}}" />
+                        </TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <Grid>
+            <Border Style="{StaticResource Hub.CardBorder}" Padding="4">
+                <ListView ItemsSource="{Binding Rows}" Style="{StaticResource Hub.ListView}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="{l:Loc ColumnPlatform}" Width="240">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type vm:UsageRow}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Width="30" Height="24" Margin="0,0,8,0" Source="{Binding PlatformId, Converter={StaticResource PlatformIcon}}" RenderOptions.BitmapScalingMode="HighQuality" />
+                                            <TextBlock Text="{Binding Name}" Foreground="{StaticResource Hub.TextStrong}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="{l:Loc StorageLibrary}" Width="300">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type vm:UsageRow}">
+                                        <StackPanel Width="280">
+                                            <TextBlock>
+                                                <Run Text="{Binding LibraryBytes, Mode=OneWay, Converter={StaticResource Bytes}}" /> · <Run Text="{Binding LibraryRoms, Mode=OneWay}" /> <Run Text="{l:Loc Games}" />
+                                            </TextBlock>
+                                            <ProgressBar Height="4" Minimum="0" Maximum="100" Value="{Binding LibraryShare, Converter={StaticResource Percent}, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="{l:Loc StorageDevice}" Width="300">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type vm:UsageRow}">
+                                        <StackPanel Width="280">
+                                            <TextBlock>
+                                                <Run Text="{Binding DeviceBytes, Mode=OneWay, Converter={StaticResource Bytes}}" /> · <Run Text="{Binding DeviceRoms, Mode=OneWay}" /> <Run Text="{l:Loc Games}" />
+                                            </TextBlock>
+                                            <ProgressBar Height="4" Minimum="0" Maximum="100" Value="{Binding DeviceShare, Converter={StaticResource Percent}, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Border>
+            <mah:ProgressRing IsActive="{Binding IsLoading}" Width="40" Height="40" />
+        </Grid>
+    </DockPanel>
+</UserControl>

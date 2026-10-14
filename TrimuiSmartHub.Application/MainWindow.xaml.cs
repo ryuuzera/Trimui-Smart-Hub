@@ -1,55 +1,34 @@
-﻿using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using TrimuiSmartHub.Application.Services.Trimui;
-using TrimuiSmartHub.Application.Pages;
 using MahApps.Metro.Controls;
-using ControlzEx.Theming;
+using TrimuiSmartHub.Application.ViewModels;
 
-namespace TrimuiSmartHub.Application
+namespace TrimuiSmartHub.Application;
+
+public partial class MainWindow : MetroWindow
 {
-    public partial class MainWindow : MetroWindow
+    public MainWindow(MainViewModel viewModel)
     {
-        private TrimuiService trimuiService;
-        public MainWindow()
-        {
-            InitializeComponent();
-
-            ThemeManager.Current.ChangeTheme(this, ThemeManager.Current.GetTheme("Light.Steel"));
-
-            trimuiService = TrimuiService.New();
-
-            DataContext = trimuiService;
-
-            MainFrame.Navigate(new Home(this));
-
-            trimuiService.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(trimuiService.Status))
-                {
-                    Dispatcher.Invoke(() => BackToHome(trimuiService.Status));
-                }
-            };
-        }
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            this.DragMove();
-        }
-
-        private void BackToHome(string status) { 
-            if (status.Contains("Dis"))
-            {
-                MainFrame.Navigate(new Home(this));
-
-                return;
-            }
-        }
+        InitializeComponent();
+        DataContext = viewModel;
     }
+
+    private void DragArea_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ClickCount == 2)
+        {
+            ToggleMaximize();
+            return;
+        }
+        if (e.OriginalSource is FrameworkElement { DataContext: NavItem }) return;
+        DragMove();
+    }
+
+    private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+
+    private void Maximize_Click(object sender, RoutedEventArgs e) => ToggleMaximize();
+
+    private void Close_Click(object sender, RoutedEventArgs e) => Close();
+
+    private void ToggleMaximize() => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
 }

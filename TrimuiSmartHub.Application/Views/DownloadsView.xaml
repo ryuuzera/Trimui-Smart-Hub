@@ -1,0 +1,66 @@
+<UserControl x:Class="TrimuiSmartHub.Application.Views.DownloadsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:vm="clr-namespace:TrimuiSmartHub.Application.ViewModels"
+             xmlns:dl="clr-namespace:TrimuiSmartHub.Core.Downloads;assembly=TrimuiSmartHub.Core"
+             xmlns:l="clr-namespace:TrimuiSmartHub.Application.Localization"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:DownloadsViewModel}">
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+            <TextBlock Text="{l:Loc NavDownloads}" Style="{StaticResource Hub.PageTitle}" />
+            <TextBlock Text="{l:Loc DownloadsSubtitle}" Style="{StaticResource Hub.Subtitle}" />
+        </StackPanel>
+
+        <Border DockPanel.Dock="Top" Style="{StaticResource Hub.Banner}" Margin="0,0,0,12">
+            <TextBlock Text="{l:Loc DownloadsDisclaimer}" Style="{StaticResource Hub.Body}" />
+        </Border>
+
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+            <ComboBox DockPanel.Dock="Left" Width="280" ItemsSource="{Binding Platforms}" SelectedItem="{Binding Platform}" DisplayMemberPath="Name"
+                      mah:TextBoxHelper.Watermark="{l:Loc DownloadsChoosePlatform}" Margin="0,0,10,0" />
+            <Button DockPanel.Dock="Right" Style="{StaticResource Hub.PrimaryButton}" Tag="Magnify" Content="{l:Loc Search}" Command="{Binding SearchCommand}" IsDefault="True" Margin="10,0,0,0" />
+            <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{l:Loc DownloadsSearchHint}" />
+        </DockPanel>
+
+        <TextBlock DockPanel.Dock="Top" Text="{Binding Status}" Style="{StaticResource Hub.Body}" Margin="0,0,0,8" Visibility="{Binding Status, Converter={StaticResource Visible}}" />
+
+        <Grid>
+            <Border Style="{StaticResource Hub.CardBorder}" Padding="4">
+                <ListView ItemsSource="{Binding Results}" Style="{StaticResource Hub.ListView}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="90">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type dl:RemoteGame}">
+                                        <Image Width="72" Height="52" Stretch="Uniform" Source="{Binding BoxArt, IsAsync=True}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="{l:Loc ColumnName}" Width="460">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type dl:RemoteGame}">
+                                        <TextBlock Text="{Binding Title}" Foreground="{StaticResource Hub.TextStrong}" TextTrimming="CharacterEllipsis" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="{l:Loc ColumnRegion}" Width="140" DisplayMemberBinding="{Binding Region}" />
+                            <GridViewColumn Width="150">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate DataType="{x:Type dl:RemoteGame}">
+                                        <Button Style="{StaticResource Hub.Button}" Tag="Download" Content="{l:Loc Download}"
+                                                Command="{Binding DataContext.DownloadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Border>
+            <mah:ProgressRing IsActive="{Binding IsLoading}" Width="40" Height="40" />
+        </Grid>
+    </DockPanel>
+</UserControl>
