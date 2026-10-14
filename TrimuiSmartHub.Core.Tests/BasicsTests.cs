@@ -113,6 +113,14 @@ public class TitleMatcherTests
     }
 
     [Fact]
+    public void Abbreviated_name_still_gets_suggestions_for_review()
+    {
+        var matches = TitleMatcher.FindBest("zelda lttp", Catalog);
+        Assert.Equal("Legend of Zelda, The - A Link to the Past (USA)", matches[0].Candidate);
+        Assert.True(matches[0].Score < TitleMatcher.AutoAcceptScore);
+    }
+
+    [Fact]
     public void Handles_reordered_words()
     {
         var best = TitleMatcher.FindBest("The Legend of Zelda - A Link to the Past", Catalog)[0];

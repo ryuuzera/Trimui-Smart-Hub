@@ -107,11 +107,16 @@ public static partial class TitleMatcher
 /// <summary>
 /// Pre-normalized candidate titles with an inverted token index. Only candidates sharing at least one
 /// word with the query are scored, which keeps matching against ~10k thumbnails per system fast.
-/// (Candidates without a common word score at most 0.4 and would be discarded anyway.)
 /// </summary>
 public sealed class TitleIndex
 {
     internal sealed record Entry(string Original, string Normalized, HashSet<string> Tokens, string? Region);
+
+    /// <summary>
+    /// Low on purpose: these are only suggestions for manual review (e.g. "zelda lttp" should still offer
+    /// "Legend of Zelda, The - A Link to the Past"). Automatic use requires <see cref="TitleMatcher.AutoAcceptScore"/>.
+    /// </summary>
+    private const double MinSuggestionScore = 0.15;
 
     private readonly List<Entry> _entries = new();
     private readonly Dictionary<string, List<int>> _byToken = new(StringComparer.Ordinal);
@@ -156,7 +161,7 @@ public sealed class TitleIndex
         return candidateIds
             .Select(id => _entries[id])
             .Select(entry => (Entry: entry, Raw: TitleMatcher.ScoreCandidate(normalizedQuery, queryTokens, queryRegion, entry)))
-            .Where(m => m.Raw > 0.4)
+            .Where(m => m.Raw > MinSuggestionScore)
             .OrderByDescending(m => m.Raw)
             .ThenBy(m => m.Entry.Original.Length)
             .ThenBy(m => m.Entry.Original, StringComparer.Ordinal)

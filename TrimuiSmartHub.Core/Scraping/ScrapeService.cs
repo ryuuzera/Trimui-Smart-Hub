@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using TrimuiSmartHub.Core.Games;
 using TrimuiSmartHub.Core.Jobs;

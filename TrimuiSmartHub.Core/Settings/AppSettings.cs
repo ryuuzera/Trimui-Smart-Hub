@@ -5,7 +5,11 @@ namespace TrimuiSmartHub.Core.Settings;
 
 public sealed class AppSettings
 {
-    public string LibraryPath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Trimui Smart Hub");
+    /// <summary>
+    /// Defaults to the user profile, not Documents: Documents is often redirected to OneDrive, which would
+    /// upload gigabytes of ROMs to the cloud.
+    /// </summary>
+    public string LibraryPath { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Trimui Smart Hub");
 
     /// <summary>"en" or "pt-BR". Empty = follow Windows.</summary>
     public string Language { get; set; } = string.Empty;

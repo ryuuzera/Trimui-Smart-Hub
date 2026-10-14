@@ -29,6 +29,9 @@ public sealed class GameDatabase
 
     public bool IsAvailable => File.Exists(_sourcePath) || File.Exists(_preparedPath);
 
+    /// <summary>True until the one-time copy+index has run (takes a few seconds).</summary>
+    public bool NeedsPreparation => _connectionString == null && !IsPrepared();
+
     public async Task EnsureReadyAsync(CancellationToken cancellationToken = default)
     {
         if (_connectionString != null) return;
