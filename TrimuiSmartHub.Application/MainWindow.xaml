@@ -1,57 +1,148 @@
-﻿<mah:MetroWindow x:Class="TrimuiSmartHub.Application.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TrimuiSmartHub.Application"
-        xmlns:Icon="http://metro.mahapps.com/winfx/xaml/iconpacks" 
-        xmlns:trimui="clr-namespace:TrimuiSmartHub.Application.Services.Trimui"
-        mc:Ignorable="d"
-        WindowStartupLocation="CenterScreen"
-        AllowsTransparency="True"
-        WindowStyle="None"
-        ShowTitleBar="False"    
-        ShowCloseButton="False"
-        ShowMaxRestoreButton="False"
-        ShowMinButton="False"
-        BorderBrush="Transparent"
-        Height="770" Width="1200" Background="Transparent"
-        xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:li="http://github.com/zeluisping/loadingIndicators/xaml/controls"
-        >
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0" ResizeBorderThickness="5"/>
-    </WindowChrome.WindowChrome>
+<mah:MetroWindow x:Class="TrimuiSmartHub.Application.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:icons="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                 xmlns:vm="clr-namespace:TrimuiSmartHub.Application.ViewModels"
+                 xmlns:views="clr-namespace:TrimuiSmartHub.Application.Views"
+                 xmlns:l="clr-namespace:TrimuiSmartHub.Application.Localization"
+                 mc:Ignorable="d"
+                 d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+                 Title="Trimui Smart Hub"
+                 WindowStartupLocation="CenterScreen"
+                 Height="780" Width="1240" MinHeight="600" MinWidth="980"
+                 ShowTitleBar="False" ShowCloseButton="False" ShowMinButton="False" ShowMaxRestoreButton="False"
+                 BorderThickness="0" GlowBrush="Black" OverlayBrush="#B30B141E"
+                 Background="{StaticResource Hub.WindowBackground}">
 
-    <Window.Resources>
-        
-    </Window.Resources>
+    <mah:MetroWindow.Resources>
+        <DataTemplate DataType="{x:Type vm:DeviceViewModel}"><views:DeviceView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LibraryViewModel}"><views:LibraryView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ScrapeViewModel}"><views:ScrapeView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DownloadsViewModel}"><views:DownloadsView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SyncViewModel}"><views:SyncView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SavesViewModel}"><views:SavesView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:BiosViewModel}"><views:BiosView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StorageViewModel}"><views:StorageView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:JobsViewModel}"><views:JobsView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><views:SettingsView /></DataTemplate>
+    </mah:MetroWindow.Resources>
+
     <Grid>
-        <Border CornerRadius="5" MouseLeftButtonDown="Border_MouseLeftButtonDown">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0.5, 0" EndPoint="0.5,1">
-                    <GradientStop Color="#2C3E50" />
-                    <GradientStop Color="#1b2a3d" Offset="0.5" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="230" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-                </LinearGradientBrush>
-            </Border.Background>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid  Grid.Row="0" Background="Transparent" Height="50" VerticalAlignment="Top" Panel.ZIndex="1">
-                    <TextBlock Text="Trimui Smart Hub" FontSize="16" VerticalAlignment="Center" Margin="25,0,0,0" Foreground="#AAB8C2" FontWeight="SemiBold"/>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
-                        <Button x:Name="CloseButton" Click="CloseButton_Click" Style="{StaticResource TransparentButton}" Margin="20,0">
-                            <Icon:PackIconMaterial VerticalAlignment="Center" Kind="Close" Foreground="#AAB8C2" Width="14" Height="14"/>
+        <!-- Sidebar -->
+        <Border Grid.Column="0" Background="{StaticResource Hub.Panel}" MouseLeftButtonDown="DragArea_MouseLeftButtonDown">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Margin="20,22,20,18">
+                    <TextBlock Text="TRIMUI" FontSize="22" FontWeight="Black" Foreground="{StaticResource Hub.TextStrong}" />
+                    <TextBlock Text="SMART HUB" FontSize="12" FontWeight="Light" Foreground="{StaticResource Hub.Text}" Margin="1,-2,0,0" />
+                </StackPanel>
+
+                <!-- Device status (always visible: the app works with or without it) -->
+                <Border DockPanel.Dock="Bottom" Margin="12" Padding="12" CornerRadius="8" Background="{StaticResource Hub.Card}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse>
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse" BasedOn="{StaticResource Hub.StatusDot}">
+                                        <Setter Property="Fill" Value="{StaticResource Hub.Error}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Monitor.IsConnected}" Value="True">
+                                                <Setter Property="Fill" Value="{StaticResource Hub.Ok}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                            </Ellipse>
+                            <TextBlock Foreground="{StaticResource Hub.TextStrong}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="160">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="{Binding Monitor.Current.Name}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Monitor.IsConnected}" Value="False">
+                                                <Setter Property="Text" Value="{l:Loc NoDevice}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                        <TextBlock Text="{Binding Monitor.Current.RootPath}" Foreground="{StaticResource Hub.Muted}" FontSize="11" Margin="18,2,0,0"
+                                   Visibility="{Binding Monitor.IsConnected, Converter={StaticResource Visible}}" />
+
+                        <!-- Running task -->
+                        <Button Style="{StaticResource Hub.LinkButton}" Command="{Binding ShowJobsCommand}" Margin="0,10,0,0"
+                                Visibility="{Binding Jobs.ActiveCount, Converter={StaticResource Visible}}">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Jobs.Current.Title}" Foreground="{StaticResource Hub.Text}" FontSize="11" TextTrimming="CharacterEllipsis" />
+                                <ProgressBar Height="4" Margin="0,4,0,0" Minimum="0" Maximum="100"
+                                             Value="{Binding Jobs.Current.Progress, Converter={StaticResource Percent}, Mode=OneWay}" />
+                            </StackPanel>
                         </Button>
                     </StackPanel>
-                </Grid>
-                <Frame Grid.Row="1" x:Name="MainFrame" NavigationUIVisibility="Hidden" 
-               HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                </Border>
+
+                <TextBlock DockPanel.Dock="Bottom" Text="{Binding Version}" Foreground="{StaticResource Hub.Muted}" FontSize="11" Margin="22,0,0,0" />
+
+                <ListBox ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" Background="Transparent" BorderThickness="0"
+                         ItemContainerStyle="{StaticResource Hub.NavItem}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:NavItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <icons:PackIconMaterial Kind="{Binding Icon}" Width="18" Height="18" VerticalAlignment="Center" Margin="0,0,12,0"
+                                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
+                                <TextBlock Text="{Binding Label}" FontSize="14" VerticalAlignment="Center"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- Content -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Custom title bar -->
+            <Grid Grid.Row="0" Background="Transparent" MouseLeftButtonDown="DragArea_MouseLeftButtonDown">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource Hub.LinkButton}" Click="Minimize_Click" Width="40" Height="40" ToolTip="{l:Loc Minimize}">
+                        <icons:PackIconMaterial Kind="WindowMinimize" Width="12" Height="12" Foreground="{StaticResource Hub.Text}" HorizontalAlignment="Center" />
+                    </Button>
+                    <Button Style="{StaticResource Hub.LinkButton}" Click="Maximize_Click" Width="40" Height="40" ToolTip="{l:Loc Maximize}">
+                        <icons:PackIconMaterial Kind="WindowMaximize" Width="12" Height="12" Foreground="{StaticResource Hub.Text}" HorizontalAlignment="Center" />
+                    </Button>
+                    <Button Style="{StaticResource Hub.LinkButton}" Click="Close_Click" Width="44" Height="40" ToolTip="{l:Loc Close}">
+                        <icons:PackIconMaterial Kind="Close" Width="12" Height="12" Foreground="{StaticResource Hub.Text}" HorizontalAlignment="Center" />
+                    </Button>
+                </StackPanel>
             </Grid>
 
-        </Border>
+            <!-- Update banner -->
+            <Border Grid.Row="1" Style="{StaticResource Hub.Banner}" Margin="28,0,28,8" Visibility="{Binding Update, Converter={StaticResource Visible}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Style="{StaticResource Hub.LinkButton}" Command="{Binding DismissUpdateCommand}" Margin="12,0,0,0">
+                        <icons:PackIconMaterial Kind="Close" Width="10" Height="10" Foreground="{StaticResource Hub.Text}" />
+                    </Button>
+                    <Button DockPanel.Dock="Right" Style="{StaticResource Hub.LinkButton}" Command="{Binding OpenUpdateCommand}" Content="{l:Loc UpdateDownload}" Margin="12,0,0,0" />
+                    <TextBlock Style="{StaticResource Hub.Body}" Foreground="{StaticResource Hub.TextStrong}">
+                        <Run Text="{l:Loc UpdateAvailable}" /> <Run Text="{Binding Update.Tag, Mode=OneWay}" FontWeight="SemiBold" />
+                    </TextBlock>
+                </DockPanel>
+            </Border>
+
+            <ContentControl Grid.Row="2" Content="{Binding CurrentPage}" Margin="28,0,28,24" Focusable="False" />
+        </Grid>
     </Grid>
 </mah:MetroWindow>

@@ -1,0 +1,88 @@
+<UserControl x:Class="TrimuiSmartHub.Application.Views.SavesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TrimuiSmartHub.Application.ViewModels"
+             xmlns:saves="clr-namespace:TrimuiSmartHub.Core.Saves;assembly=TrimuiSmartHub.Core"
+             xmlns:l="clr-namespace:TrimuiSmartHub.Application.Localization"
+             xmlns:infra="clr-namespace:TrimuiSmartHub.Application.Infrastructure"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:SavesViewModel}">
+
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+                <Button Style="{StaticResource Hub.PrimaryButton}" Tag="ContentSaveOutline" Content="{l:Loc BackupNow}" Command="{Binding BackupNowCommand}"
+                        IsEnabled="{Binding Monitor.IsConnected}" />
+                <Button Style="{StaticResource Hub.Button}" Tag="FolderOpenOutline" Content="{l:Loc OpenFolder}" Command="{Binding OpenFolderCommand}" Margin="0" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{l:Loc NavSaves}" Style="{StaticResource Hub.PageTitle}" />
+                <TextBlock Text="{l:Loc SavesSubtitle}" Style="{StaticResource Hub.Subtitle}" />
+                <TextBlock Style="{StaticResource Hub.Subtitle}" Visibility="{Binding SaveDirs, Converter={StaticResource Visible}}" Margin="0,4,0,0">
+                    <Run Text="{l:Loc SavesFolders}" /> <Run Text="{Binding SaveDirs, Mode=OneWay}" Foreground="{StaticResource Hub.Text}" />
+                </TextBlock>
+            </StackPanel>
+        </DockPanel>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Style="{StaticResource Hub.CardBorder}" Padding="8" Margin="0,0,16,0">
+                <DockPanel>
+                    <CheckBox DockPanel.Dock="Top" Content="{l:Loc SavesOnlyThisDevice}" IsChecked="{Binding OnlyThisDevice}" Margin="6,0,0,8" />
+                    <TextBlock DockPanel.Dock="Top" Text="{l:Loc SavesNone}" Style="{StaticResource Hub.Body}" Margin="6"
+                               Visibility="{Binding Backups.Count, Converter={StaticResource Visible}, ConverterParameter=invert}" />
+                    <ListBox ItemsSource="{Binding Backups}" SelectedItem="{Binding SelectedBackup}" Background="Transparent" BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="{x:Type saves:SaveBackup}">
+                                <StackPanel Margin="2,4">
+                                    <TextBlock Text="{Binding CreatedUtc, StringFormat=g, Converter={x:Static infra:LocalTimeConverter.Instance}}" Foreground="{StaticResource Hub.TextStrong}" />
+                                    <TextBlock FontSize="11" Foreground="{StaticResource Hub.Muted}">
+                                        <Run Text="{Binding DeviceName, Mode=OneWay}" /> · <Run Text="{Binding Files.Count, Mode=OneWay}" /> <Run Text="{l:Loc Files}" /> · <Run Text="{Binding TotalSize, Mode=OneWay, Converter={StaticResource Bytes}}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Column="1" Style="{StaticResource Hub.CardBorder}" Padding="8" Visibility="{Binding SelectedBackup, Converter={StaticResource Visible}}">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="4,0,4,8">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button Style="{StaticResource Hub.Button}" Tag="CheckboxMultipleMarkedOutline" Content="{l:Loc SelectAll}" Command="{Binding SelectAllFilesCommand}" />
+                            <Button Style="{StaticResource Hub.PrimaryButton}" Tag="BackupRestore" Content="{l:Loc Restore}" Command="{Binding RestoreCommand}"
+                                    IsEnabled="{Binding CanRestoreSelected}" Margin="0" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="{l:Loc SavesFilesTitle}" Style="{StaticResource Hub.SectionTitle}" Margin="0" />
+                            <TextBlock Text="{l:Loc SavesRestoreHint}" Style="{StaticResource Hub.Subtitle}" />
+                        </StackPanel>
+                    </DockPanel>
+                    <ListView ItemsSource="{Binding Files}" Style="{StaticResource Hub.ListView}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="40">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate DataType="{x:Type vm:SaveFileRow}">
+                                            <CheckBox IsChecked="{Binding IsSelected}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="{l:Loc ColumnName}" Width="260" DisplayMemberBinding="{Binding Name}" />
+                                <GridViewColumn Header="{l:Loc ColumnFolder}" Width="190" DisplayMemberBinding="{Binding Folder}" />
+                                <GridViewColumn Header="{l:Loc ColumnModified}" Width="140" DisplayMemberBinding="{Binding LastWrite, StringFormat=g}" />
+                                <GridViewColumn Header="{l:Loc ColumnSize}" Width="90" DisplayMemberBinding="{Binding File.Size, Converter={StaticResource Bytes}}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</UserControl>

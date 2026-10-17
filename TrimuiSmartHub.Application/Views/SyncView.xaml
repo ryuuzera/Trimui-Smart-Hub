@@ -1,0 +1,130 @@
+<UserControl x:Class="TrimuiSmartHub.Application.Views.SyncView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:vm="clr-namespace:TrimuiSmartHub.Application.ViewModels"
+             xmlns:l="clr-namespace:TrimuiSmartHub.Application.Localization"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:SyncViewModel}">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="SyncRowsList">
+            <ListView ItemsSource="{Binding}" Style="{StaticResource Hub.ListView}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="40">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type vm:SyncRow}">
+                                    <CheckBox IsChecked="{Binding Selected}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{l:Loc ColumnAction}" Width="110">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type vm:SyncRow}">
+                                    <TextBlock Text="{Binding Item.Kind, Converter={StaticResource EnumLoc}}" Foreground="{StaticResource Hub.TextStrong}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{l:Loc ColumnType}" Width="90" DisplayMemberBinding="{Binding Item.Category, Converter={StaticResource EnumLoc}}" />
+                        <GridViewColumn Header="{l:Loc ColumnPlatform}" Width="90" DisplayMemberBinding="{Binding Item.PlatformId}" />
+                        <GridViewColumn Header="{l:Loc ColumnFile}" Width="520">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type vm:SyncRow}">
+                                    <TextBlock Text="{Binding Path}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Path}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{l:Loc ColumnSize}" Width="90" DisplayMemberBinding="{Binding SizeText}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+            <TextBlock Text="{l:Loc NavSync}" Style="{StaticResource Hub.PageTitle}" />
+            <TextBlock Text="{l:Loc SyncSubtitle}" Style="{StaticResource Hub.Subtitle}" />
+        </StackPanel>
+
+        <!-- No device -->
+        <Border DockPanel.Dock="Top" Style="{StaticResource Hub.Banner}" Margin="0,0,0,12"
+                Visibility="{Binding Monitor.IsConnected, Converter={StaticResource Visible}, ConverterParameter=invert}">
+            <TextBlock Text="{l:Loc SyncNeedsDevice}" Style="{StaticResource Hub.Body}" />
+        </Border>
+
+        <!-- Options -->
+        <Border DockPanel.Dock="Top" Style="{StaticResource Hub.CardBorder}" Margin="0,0,0,12">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource Hub.Button}" Tag="Magnify" Content="{l:Loc SyncCompare}" Command="{Binding BuildPlanCommand}" />
+                    <Button Style="{StaticResource Hub.PrimaryButton}" Tag="Check" Content="{l:Loc SyncApply}" Command="{Binding ApplyCommand}" Margin="0" />
+                </StackPanel>
+                <WrapPanel VerticalAlignment="Center">
+                    <RadioButton Content="{l:Loc SyncDirectionTo}" IsChecked="{Binding IsToDevice}" Margin="0,0,16,0" />
+                    <RadioButton Content="{l:Loc SyncDirectionFrom}" IsChecked="{Binding IsToDevice, Converter={StaticResource Not}}" Margin="0,0,32,0" />
+                    <CheckBox Content="{l:Loc SyncRoms}" IsChecked="{Binding IncludeRoms}" Margin="0,0,16,0" />
+                    <CheckBox Content="{l:Loc SyncBoxarts}" IsChecked="{Binding IncludeBoxarts}" Margin="0,0,16,0" />
+                    <CheckBox Content="{l:Loc SyncBios}" IsChecked="{Binding IncludeBios}" />
+                </WrapPanel>
+            </DockPanel>
+        </Border>
+
+        <mah:MetroProgressBar DockPanel.Dock="Top" IsIndeterminate="{Binding IsBusy}" Height="3" Margin="0,0,0,8"
+                              Visibility="{Binding IsBusy, Converter={StaticResource Visible}}" />
+
+        <TextBlock DockPanel.Dock="Top" Text="{Binding LastResult}" Style="{StaticResource Hub.Body}" Foreground="{StaticResource Hub.Ok}" Margin="0,0,0,8"
+                   Visibility="{Binding LastResult, Converter={StaticResource Visible}}" />
+
+        <StackPanel DockPanel.Dock="Top" Visibility="{Binding HasPlan, Converter={StaticResource Visible}}">
+            <TextBlock Text="{Binding Summary}" Style="{StaticResource Hub.SectionTitle}" />
+            <ItemsControl ItemsSource="{Binding Warnings}" Margin="0,0,0,8">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding StringFormat=⚠ {0}}" Foreground="{StaticResource Hub.Warn}" TextWrapping="Wrap" Margin="0,1" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+        <Grid Visibility="{Binding HasPlan, Converter={StaticResource Visible}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Style="{StaticResource Hub.CardBorder}" Padding="8">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="4,0,4,6">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button Style="{StaticResource Hub.LinkButton}" Content="{l:Loc SelectAll}" Command="{Binding SelectAllChangesCommand}" CommandParameter="{StaticResource True}" Margin="0,0,12,0" />
+                            <Button Style="{StaticResource Hub.LinkButton}" Content="{l:Loc SelectNone}" Command="{Binding SelectAllChangesCommand}" CommandParameter="{StaticResource False}" />
+                        </StackPanel>
+                        <TextBlock Text="{l:Loc SyncChanges}" Style="{StaticResource Hub.SectionTitle}" Margin="0" />
+                    </DockPanel>
+                    <ContentControl Content="{Binding Changes}" ContentTemplate="{StaticResource SyncRowsList}" />
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Row="2" Style="{StaticResource Hub.CardBorder}" Padding="8" Margin="0,12,0,0"
+                    Visibility="{Binding OnlyOnTarget.Count, Converter={StaticResource Visible}}">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="4,0,4,6">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button Style="{StaticResource Hub.LinkButton}" Content="{l:Loc SelectAll}" Command="{Binding SelectAllOrphansCommand}" CommandParameter="{StaticResource True}" Margin="0,0,12,0" />
+                            <Button Style="{StaticResource Hub.LinkButton}" Content="{l:Loc SelectNone}" Command="{Binding SelectAllOrphansCommand}" CommandParameter="{StaticResource False}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="{l:Loc SyncOnlyOnDevice}" Style="{StaticResource Hub.SectionTitle}" Margin="0" />
+                            <TextBlock Text="{l:Loc SyncOnlyOnDeviceHint}" Style="{StaticResource Hub.Subtitle}" />
+                        </StackPanel>
+                    </DockPanel>
+                    <ContentControl Content="{Binding OnlyOnTarget}" ContentTemplate="{StaticResource SyncRowsList}" />
+                </DockPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</UserControl>

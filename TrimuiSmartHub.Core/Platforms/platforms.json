@@ -1,0 +1,231 @@
+{
+  "platforms": [
+    {
+      "id": "ARCADE", "name": "Arcade (MAME)", "arcade": true,
+      "libretroSystems": [ "MAME" ],
+      "dbSystems": [ "mame2003plus", "mame", "fbneo", "mame2003", "mame2010" ],
+      "retrostic": "https://www.retrostic.com/roms/mame"
+    },
+    {
+      "id": "MAME", "name": "MAME", "arcade": true,
+      "libretroSystems": [ "MAME" ],
+      "dbSystems": [ "mame", "mame2003plus", "mame2003" ],
+      "retrostic": "https://www.retrostic.com/roms/mame"
+    },
+    {
+      "id": "MAME2003PLUS", "name": "MAME 2003-Plus", "arcade": true,
+      "libretroSystems": [ "MAME" ],
+      "dbSystems": [ "mame2003plus", "mame2003" ],
+      "retrostic": "https://www.retrostic.com/roms/mame"
+    },
+    {
+      "id": "FBNEO", "name": "FinalBurn Neo", "arcade": true,
+      "libretroSystems": [ "FBNeo - Arcade Games", "MAME" ],
+      "dbSystems": [ "fbneo" ]
+    },
+    {
+      "id": "CPS1", "name": "Capcom Play System 1", "arcade": true,
+      "libretroSystems": [ "MAME", "FBNeo - Arcade Games" ],
+      "dbSystems": [ "fbneo", "mame2003plus", "mame" ],
+      "retrostic": "https://www.retrostic.com/roms/cps-1"
+    },
+    {
+      "id": "CPS2", "name": "Capcom Play System 2", "arcade": true,
+      "libretroSystems": [ "MAME", "FBNeo - Arcade Games" ],
+      "dbSystems": [ "fbneo", "mame2003plus", "mame" ],
+      "retrostic": "https://www.retrostic.com/roms/cps-2"
+    },
+    {
+      "id": "CPS3", "name": "Capcom Play System 3", "arcade": true,
+      "libretroSystems": [ "MAME", "FBNeo - Arcade Games" ],
+      "dbSystems": [ "fbneo", "mame" ],
+      "retrostic": "https://www.retrostic.com/roms/cps-3"
+    },
+    {
+      "id": "NEOGEO", "name": "Neo Geo", "arcade": true,
+      "libretroSystems": [ "SNK - Neo Geo", "FBNeo - Arcade Games", "MAME" ],
+      "dbSystems": [ "fbneo", "mame2003plus", "mame", "neogeo" ],
+      "retrostic": "https://www.retrostic.com/roms/neo-geo",
+      "bios": [
+        { "file": "neogeo.zip", "required": true, "note": "Neo Geo BIOS (any version)" }
+      ]
+    },
+    {
+      "id": "PGM", "name": "IGS PolyGame Master", "arcade": true,
+      "libretroSystems": [ "MAME", "FBNeo - Arcade Games" ],
+      "dbSystems": [ "fbneo", "mame" ],
+      "bios": [
+        { "file": "pgm.zip", "required": true, "note": "PGM BIOS" }
+      ]
+    },
+    {
+      "id": "ATARI2600", "name": "Atari 2600",
+      "extensions": [ "a26" ],
+      "libretroSystems": [ "Atari - 2600" ],
+      "dbSystems": [ "atari2600" ],
+      "retrostic": "https://www.retrostic.com/roms/atari-2600"
+    },
+    {
+      "id": "ATARI7800", "name": "Atari 7800",
+      "extensions": [ "a78" ],
+      "libretroSystems": [ "Atari - 7800" ],
+      "dbSystems": [ "atari7800" ],
+      "retrostic": "https://www.retrostic.com/roms/atari-7800",
+      "bios": [
+        { "file": "7800 BIOS (U).rom", "md5": [ "0763f1ffb006ddbe32e52d497ee848ae" ], "required": false }
+      ]
+    },
+    {
+      "id": "FC", "name": "Nintendo Entertainment System",
+      "extensions": [ "nes", "fds", "unf", "unif" ],
+      "libretroSystems": [ "Nintendo - Nintendo Entertainment System", "Nintendo - Family Computer Disk System" ],
+      "dbSystems": [ "nes", "fds" ],
+      "retrostic": "https://www.retrostic.com/roms/nes",
+      "bios": [
+        { "file": "disksys.rom", "md5": [ "ca30b50f880eb660a320674ed365ef7a" ], "required": false, "note": "Famicom Disk System only" }
+      ]
+    },
+    {
+      "id": "SFC", "name": "Super Nintendo",
+      "extensions": [ "sfc", "smc", "fig", "swc", "bs" ],
+      "libretroSystems": [ "Nintendo - Super Nintendo Entertainment System" ],
+      "dbSystems": [ "snes", "satellaview", "sufami" ],
+      "retrostic": "https://www.retrostic.com/roms/snes"
+    },
+    {
+      "id": "GB", "name": "Game Boy",
+      "extensions": [ "gb" ],
+      "libretroSystems": [ "Nintendo - Game Boy" ],
+      "dbSystems": [ "gb" ],
+      "retrostic": "https://www.retrostic.com/roms/gb",
+      "bios": [
+        { "file": "gb_bios.bin", "md5": [ "32fbbd84168d3482956eb3c5051637f5" ], "required": false }
+      ]
+    },
+    {
+      "id": "GBC", "name": "Game Boy Color",
+      "extensions": [ "gbc" ],
+      "libretroSystems": [ "Nintendo - Game Boy Color" ],
+      "dbSystems": [ "gbc" ],
+      "retrostic": "https://www.retrostic.com/roms/gbc",
+      "bios": [
+        { "file": "gbc_bios.bin", "md5": [ "dbfce9db9deaa2567f6a84fde55f9680" ], "required": false }
+      ]
+    },
+    {
+      "id": "GBA", "name": "Game Boy Advance",
+      "extensions": [ "gba" ],
+      "libretroSystems": [ "Nintendo - Game Boy Advance" ],
+      "dbSystems": [ "gba" ],
+      "retrostic": "https://www.retrostic.com/roms/gba",
+      "bios": [
+        { "file": "gba_bios.bin", "md5": [ "a860e8c0b6d573d191e4ec7db1b1e4f6" ], "required": false }
+      ]
+    },
+    {
+      "id": "N64", "name": "Nintendo 64", "extractZip": true,
+      "extensions": [ "n64", "z64", "v64" ],
+      "libretroSystems": [ "Nintendo - Nintendo 64" ],
+      "dbSystems": [ "n64" ],
+      "retrostic": "https://www.retrostic.com/roms/n64"
+    },
+    {
+      "id": "NDS", "name": "Nintendo DS", "extractZip": true,
+      "extensions": [ "nds" ],
+      "libretroSystems": [ "Nintendo - Nintendo DS" ],
+      "dbSystems": [ "nds" ],
+      "retrostic": "https://www.retrostic.com/roms/nds",
+      "bios": [
+        { "file": "bios7.bin", "md5": [ "df692a80a5b1bc90728bc3dfc76cd948" ], "required": false },
+        { "file": "bios9.bin", "md5": [ "a392174eb3e572fed6447e956bde4b25" ], "required": false },
+        { "file": "firmware.bin", "required": false }
+      ]
+    },
+    {
+      "id": "MD", "name": "Sega Mega Drive / Genesis",
+      "extensions": [ "md", "gen", "smd", "68k", "sgd" ],
+      "libretroSystems": [ "Sega - Mega Drive - Genesis" ],
+      "dbSystems": [ "md" ],
+      "retrostic": "https://www.retrostic.com/roms/megadrive"
+    },
+    {
+      "id": "MS", "name": "Sega Master System",
+      "extensions": [ "sms" ],
+      "libretroSystems": [ "Sega - Master System - Mark III" ],
+      "dbSystems": [ "sms" ],
+      "retrostic": "https://www.retrostic.com/roms/master-system"
+    },
+    {
+      "id": "GG", "name": "Sega Game Gear",
+      "extensions": [ "gg" ],
+      "libretroSystems": [ "Sega - Game Gear" ],
+      "dbSystems": [ "gg" ],
+      "retrostic": "https://www.retrostic.com/roms/game-gear"
+    },
+    {
+      "id": "SS", "name": "Sega Saturn", "extractZip": true,
+      "libretroSystems": [ "Sega - Saturn" ],
+      "dbSystems": [ "saturn" ],
+      "retrostic": "https://www.retrostic.com/roms/saturn",
+      "bios": [
+        { "file": "saturn_bios.bin", "md5": [ "af5828fdff51384f99b3c4926be27762" ], "required": true, "group": "saturn" },
+        { "file": "sega_101.bin", "md5": [ "85ec9ca47d8f6807718151cbcca8b964" ], "required": true, "group": "saturn" },
+        { "file": "mpr-17933.bin", "md5": [ "3240872c70984b6cbfda1586cab68dbe" ], "required": true, "group": "saturn" }
+      ]
+    },
+    {
+      "id": "DC", "name": "Sega Dreamcast", "extractZip": true,
+      "extensions": [ "cdi", "gdi" ],
+      "libretroSystems": [ "Sega - Dreamcast" ],
+      "dbSystems": [ "dc" ],
+      "retrostic": "https://www.retrostic.com/roms/dreamcast",
+      "bios": [
+        { "file": "dc/dc_boot.bin", "md5": [ "e10c53c2f8b90bab96ead2d368858623" ], "required": false, "note": "Recommended (Flycast can run without it)" },
+        { "file": "dc/dc_flash.bin", "md5": [ "0a93f7940c455905bea6e392dfde92a4" ], "required": false }
+      ]
+    },
+    {
+      "id": "PS", "name": "Sony PlayStation", "extractZip": true,
+      "libretroSystems": [ "Sony - PlayStation" ],
+      "dbSystems": [ "psx" ],
+      "retrostic": "https://www.retrostic.com/roms/ps-1",
+      "bios": [
+        { "file": "scph1001.bin", "md5": [ "924e392ed05558ffdb115408c263dccf" ], "required": true, "group": "psx" },
+        { "file": "scph5500.bin", "md5": [ "8dd7d5296a650fac7319bce665a6a53c" ], "required": true, "group": "psx" },
+        { "file": "scph5501.bin", "md5": [ "490f666e1afb15b7362b406ed1cea246" ], "required": true, "group": "psx" },
+        { "file": "scph5502.bin", "md5": [ "32736f17079d0b2b7024407c39bd3050" ], "required": true, "group": "psx" }
+      ]
+    },
+    {
+      "id": "PPSSPP", "name": "Sony PSP", "extractZip": true,
+      "extensions": [ "cso" ],
+      "libretroSystems": [ "Sony - PlayStation Portable" ],
+      "dbSystems": [ "psp", "psp_psn" ],
+      "retrostic": "https://www.retrostic.com/roms/psp"
+    },
+    {
+      "id": "PCE", "name": "PC Engine / TurboGrafx-16",
+      "extensions": [ "pce", "sgx" ],
+      "libretroSystems": [ "NEC - PC Engine - TurboGrafx 16", "NEC - PC Engine CD - TurboGrafx-CD", "NEC - PC Engine SuperGrafx" ],
+      "dbSystems": [ "pce", "tgcd", "sgx" ],
+      "retrostic": "https://www.retrostic.com/roms/turbografx16",
+      "bios": [
+        { "file": "syscard3.pce", "md5": [ "38179df8f4ac870017db21ebcbf53114" ], "required": false, "note": "PC Engine CD only" }
+      ]
+    },
+    {
+      "id": "NGP", "name": "Neo Geo Pocket",
+      "extensions": [ "ngp", "ngc" ],
+      "libretroSystems": [ "SNK - Neo Geo Pocket", "SNK - Neo Geo Pocket Color" ],
+      "dbSystems": [ "ngp", "ngpc" ],
+      "retrostic": "https://www.retrostic.com/roms/neo-geo-pocket"
+    },
+    {
+      "id": "WSC", "name": "WonderSwan Color",
+      "extensions": [ "ws", "wsc" ],
+      "libretroSystems": [ "Bandai - WonderSwan Color", "Bandai - WonderSwan" ],
+      "dbSystems": [ "wswanc", "wswan" ],
+      "retrostic": "https://www.retrostic.com/roms/wonderswan-color"
+    }
+  ]
+}

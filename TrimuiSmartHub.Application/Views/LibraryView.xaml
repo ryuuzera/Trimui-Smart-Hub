@@ -1,0 +1,153 @@
+<UserControl x:Class="TrimuiSmartHub.Application.Views.LibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:icons="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:vm="clr-namespace:TrimuiSmartHub.Application.ViewModels"
+             xmlns:lib="clr-namespace:TrimuiSmartHub.Core.Library;assembly=TrimuiSmartHub.Core"
+             xmlns:l="clr-namespace:TrimuiSmartHub.Application.Localization"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance Type=vm:LibraryViewModel}"
+             AllowDrop="True" Drop="OnDrop" DragOver="OnDragOver" Background="Transparent">
+
+    <DockPanel>
+        <!-- Header -->
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,16">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+                <Button Style="{StaticResource Hub.PrimaryButton}" Tag="FilePlusOutline" Content="{l:Loc ImportFiles}" Command="{Binding ImportFilesCommand}" />
+                <Button Style="{StaticResource Hub.Button}" Tag="FolderPlusOutline" Content="{l:Loc ImportFolder}" Command="{Binding ImportFolderCommand}" />
+                <Button Style="{StaticResource Hub.Button}" Tag="FolderOpenOutline" ToolTip="{l:Loc OpenFolder}" Command="{Binding OpenLibraryFolderCommand}" Margin="0" />
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="{l:Loc NavLibrary}" Style="{StaticResource Hub.PageTitle}" />
+                <TextBlock Style="{StaticResource Hub.Subtitle}">
+                    <Run Text="{l:Loc LibrarySubtitle}" /> <Run Text="{Binding LibraryPath, Mode=OneWay}" Foreground="{StaticResource Hub.Text}" />
+                </TextBlock>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Files waiting for a platform choice -->
+        <Border DockPanel.Dock="Bottom" Style="{StaticResource Hub.Banner}" Margin="0,12,0,0"
+                Visibility="{Binding PendingImports.Count, Converter={StaticResource Visible}}">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="{l:Loc PendingTitle}" Style="{StaticResource Hub.SectionTitle}" />
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,8,0,0">
+                    <Button Style="{StaticResource Hub.PrimaryButton}" Content="{l:Loc PendingImport}" Command="{Binding ImportPendingCommand}" />
+                    <Button Style="{StaticResource Hub.Button}" Content="{l:Loc PendingDiscard}" Command="{Binding DiscardPendingCommand}" />
+                </StackPanel>
+                <ItemsControl ItemsSource="{Binding PendingImports}" MaxHeight="160">
+                    <ItemsControl.Template>
+                        <ControlTemplate><ScrollViewer VerticalScrollBarVisibility="Auto"><ItemsPresenter /></ScrollViewer></ControlTemplate>
+                    </ItemsControl.Template>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:PendingImport}">
+                            <DockPanel Margin="0,2">
+                                <ComboBox DockPanel.Dock="Right" Width="260" ItemsSource="{Binding Candidates}" SelectedItem="{Binding Chosen}" DisplayMemberPath="Name"
+                                          mah:TextBoxHelper.Watermark="{l:Loc PendingChoose}" />
+                                <TextBlock Text="{Binding FileName}" Style="{StaticResource Hub.Body}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                            </DockPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </DockPanel>
+        </Border>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Platforms -->
+            <Border Style="{StaticResource Hub.CardBorder}" Padding="6" Margin="0,0,16,0">
+                <ListBox ItemsSource="{Binding Platforms}" SelectedItem="{Binding SelectedPlatform}" Background="Transparent" BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type lib:PlatformSummary}">
+                            <DockPanel Margin="2,4">
+                                <Image DockPanel.Dock="Left" Width="34" Height="28" Margin="0,0,10,0" RenderOptions.BitmapScalingMode="HighQuality"
+                                       Source="{Binding Platform.Id, Converter={StaticResource PlatformIcon}}" />
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Platform.Name}" Foreground="{StaticResource Hub.TextStrong}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock FontSize="11" Foreground="{StaticResource Hub.Muted}">
+                                        <Run Text="{Binding RomCount, Mode=OneWay}" /> <Run Text="{l:Loc Games}" /> · <Run Text="{Binding TotalSize, Mode=OneWay, Converter={StaticResource Bytes}}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <!-- Empty library -->
+            <Border Grid.ColumnSpan="2" Style="{StaticResource Hub.CardBorder}" Padding="40"
+                    Visibility="{Binding Platforms.Count, Converter={StaticResource Visible}, ConverterParameter=invert}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520">
+                    <icons:PackIconMaterial Kind="Bookshelf" Width="48" Height="48" Foreground="{StaticResource Hub.Text}" HorizontalAlignment="Center" />
+                    <TextBlock Text="{l:Loc LibraryEmptyTitle}" Style="{StaticResource Hub.SectionTitle}" HorizontalAlignment="Center" Margin="0,12,0,8" />
+                    <TextBlock Text="{l:Loc LibraryEmptyText}" Style="{StaticResource Hub.Body}" TextAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <!-- ROMs -->
+            <DockPanel Grid.Column="1" Visibility="{Binding SelectedPlatform, Converter={StaticResource Visible}}">
+                <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                    <Button Style="{StaticResource Hub.Button}" Tag="ImageSearchOutline" Content="{l:Loc LibraryScrape}" Command="{Binding ScrapeMissingCommand}" Margin="0,0,8,6" />
+                    <Button Style="{StaticResource Hub.Button}" Tag="FormatLetterCase" Content="{l:Loc LibraryRenameCanonical}" Command="{Binding RenameToCanonicalCommand}" Margin="0,0,8,6" />
+                    <Button Style="{StaticResource Hub.Button}" Tag="ContentDuplicate" Content="{l:Loc LibraryDuplicates}" Command="{Binding FindDuplicatesCommand}" Margin="0,0,8,6" />
+                    <Button Style="{StaticResource Hub.Button}" Tag="ImageBrokenVariant" Content="{l:Loc LibraryOrphans}" Command="{Binding CleanOrphansCommand}" Margin="0,0,8,6" />
+                    <Button Style="{StaticResource Hub.Button}" Tag="FolderOpenOutline" Content="{l:Loc OpenFolder}" Command="{Binding OpenFolderCommand}" Margin="0,0,8,6" />
+                </WrapPanel>
+
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <CheckBox Content="{l:Loc LibraryOnlyMissing}" IsChecked="{Binding OnlyMissingBoxart}" Margin="12,0" VerticalAlignment="Center" />
+                        <Button Style="{StaticResource Hub.Button}" Tag="RenameBox" Content="{l:Loc Rename}" Command="{Binding RenameCommand}" />
+                        <Button Style="{StaticResource Hub.Button}" Tag="DeleteOutline" Content="{l:Loc Delete}" Command="{Binding DeleteCommand}" Margin="0" />
+                    </StackPanel>
+                    <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" mah:TextBoxHelper.Watermark="{l:Loc LibraryFilter}" mah:TextBoxHelper.ClearTextButton="True" />
+                </DockPanel>
+
+                <Border Style="{StaticResource Hub.CardBorder}" Padding="4">
+                    <ListView x:Name="RomList" ItemsSource="{Binding RomsView}" Style="{StaticResource Hub.ListView}" SelectionMode="Extended"
+                              MouseDoubleClick="RomList_MouseDoubleClick">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource MahApps.Styles.ListViewItem}">
+                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                                <Setter Property="Background" Value="Transparent" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="70">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate DataType="{x:Type vm:RomRow}">
+                                            <Grid Width="56" Height="40">
+                                                <Image Source="{Binding BoxartFullPath, Converter={StaticResource Thumbnail}, IsAsync=True}" Stretch="Uniform" />
+                                                <icons:PackIconMaterial Kind="ImageOffOutline" Width="18" Height="18" Foreground="{StaticResource Hub.Muted}"
+                                                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                        Visibility="{Binding HasBoxart, Converter={StaticResource Visible}, ConverterParameter=invert}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="{l:Loc ColumnName}" Width="520">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate DataType="{x:Type vm:RomRow}">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Name}" Foreground="{StaticResource Hub.TextStrong}" TextTrimming="CharacterEllipsis" />
+                                                <TextBlock Text="{Binding Folder}" FontSize="11" Foreground="{StaticResource Hub.Muted}" Visibility="{Binding Folder, Converter={StaticResource Visible}}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="{l:Loc ColumnSize}" Width="100" DisplayMemberBinding="{Binding Size, Converter={StaticResource Bytes}}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Border>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</UserControl>

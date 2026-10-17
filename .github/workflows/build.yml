@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore TrimuiSmartHub.sln
+
+      - name: Build
+        run: dotnet build TrimuiSmartHub.sln -c Release --no-restore
+
+      - name: Test
+        run: dotnet test TrimuiSmartHub.Core.Tests -c Release --no-build --logger "console;verbosity=normal"
+
+      - name: Publish (self-contained, single file)
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          dotnet publish TrimuiSmartHub.Application -c Release -r win-x64 --self-contained true `
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true `
+            -p:Version=$version -p:DebugType=none -o publish
+          Compress-Archive -Path publish/* -DestinationPath "TrimuiSmartHub-${{ github.ref_name }}-win-x64.zip"
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: TrimuiSmartHub-*-win-x64.zip
+          generate_release_notes: true
